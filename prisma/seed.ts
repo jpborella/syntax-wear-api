@@ -19,7 +19,9 @@ if (!dbUrl.searchParams.has("uselibpqcompat")) {
 }
 
 const prisma = new PrismaClient({
-    adapter: new PrismaPg(dbUrl.toString()),
+    adapter: new PrismaPg({
+        connectionString: dbUrl.toString(),
+    }),
 });
 
 const categories = [

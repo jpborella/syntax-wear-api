@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
     provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 model User {
@@ -17,8 +18,14 @@ model User {
     birthDate DateTime?
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
+    role      Role      @default(USER)
 
     @@map("users")
+}
+
+enum Role {
+    USER
+    ADMIN
 }
 
 model Category {

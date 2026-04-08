@@ -4,12 +4,24 @@ import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import swagger from '@fastify/swagger';
 import productsRoutes from './routes/products.routes';
+import jwt from '@fastify/jwt';
+import authRoutes from './routes/auth.routes';
+
 
 const PORT = parseInt(process.env.PORT ?? '3000');
 const HOST = process.env.HOST ?? '0.0.0.0';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET não definida no ambiente');
+}
 
 const fastify = Fastify({
     logger: true
+})
+
+fastify.register(jwt, {
+    secret: process.env.JWT_SECRET!
 })
 
 fastify.register(cors, {
@@ -49,6 +61,8 @@ fastify.register(swagger, {
 })
 
 fastify.register(productsRoutes, { prefix: '/products' });
+
+fastify.register(authRoutes, { prefix: '/auth' });
 
 fastify.get('/', async () => {
     return {
