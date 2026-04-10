@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { registerUser } from "../services/auth.service";
-import { RegisterRequest } from "../types";
+import { loginUser, registerUser } from "../services/auth.service";
+import { AuthRequest, RegisterRequest } from "../types";
 
 export const register = async (request: FastifyRequest, reply: FastifyReply) => {
 
@@ -11,6 +11,18 @@ export const register = async (request: FastifyRequest, reply: FastifyReply) => 
 
     reply.status(201).send({
         user, 
+        token
+    });
+};
+
+export const login = async (request: FastifyRequest<{Body: AuthRequest}>, reply: FastifyReply) => {
+    // Lógica de login de usuário
+    const user = await loginUser(request.body as AuthRequest);
+
+    const token = request.server.jwt.sign({userId: user.id});
+
+    reply.status(200).send({
+        user,
         token
     });
 };
