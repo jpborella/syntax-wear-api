@@ -7,20 +7,20 @@ export default async function authRoutes(fastify: FastifyInstance) {
 		{
 			schema: {
 				tags: ["Auth"],
-				description: "Registra um novo usuário e retorna um token JWT",
+				description: "Registra um novo usuário e retorna um token JWT.",
 				body: {
 					type: "object",
 					properties: {
-						firstName: { type: "string", description: "Nome do usuário" },
-						email: { type: "string", description: "Email do usuário" },
-						lastName: { type: "string", description: "Sobrenome do usuário" },
-						password: { type: "string", description: "Senha do usuário" },
-						cpf: { type: "string", description: "CPF do usuário (somente números)" },
+						firstName: { type: "string", description: "Nome do usuário." },
+						email: { type: "string", description: "Email do usuário." },
+						lastName: { type: "string", description: "Sobrenome do usuário." },
+						password: { type: "string", description: "Senha do usuário." },
+						cpf: { type: "string", description: "CPF do usuário (somente números)." },
 						birthDate: {
 							type: "string",
-							description: "Data de nascimento do usuário (DD/MM/AAAA)",
+							description: "Data de nascimento do usuário (DD/MM/AAAA).",
 						},
-						phone: { type: "string", description: "Telefone do usuário (com DDD, somente números)" },
+						phone: { type: "string", description: "Telefone do usuário (com DDD, somente números)." },
 					},
 				},
 			},
@@ -33,12 +33,12 @@ export default async function authRoutes(fastify: FastifyInstance) {
 		{
 			schema: {
 				tags: ["Auth"],
-				description: "Realiza login do usuário e retorna um token JWT",
+				description: "Realiza login do usuário e retorna um token JWT.",
 				body: {
 					type: "object",
 					properties: {
-						email: { type: "string", description: "Email do usuário" },
-						password: { type: "string", description: "Senha do usuário" },
+						email: { type: "string", description: "Email do usuário." },
+						password: { type: "string", description: "Senha do usuário." },
 					},
 				},
 			},

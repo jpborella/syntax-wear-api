@@ -77,3 +77,13 @@ export const getProducts = async (filter: ProductFilters) => {
         throw error;
     }
 };
+
+export const getProductById = async (id: number) => {
+    const product = await prisma.product.findUnique({
+        where: { id },
+    });
+    if (!product) {
+        throw new Error("Produto não encontrado.");
+    }
+    return product;
+};

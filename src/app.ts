@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import swagger from '@fastify/swagger';
@@ -17,20 +17,20 @@ if (!JWT_SECRET) {
 }
 
 const fastify = Fastify({
-    logger: true
-})
+    logger: true,
+});
 
 fastify.register(jwt, {
-    secret: process.env.JWT_SECRET!
-})
+    secret: process.env.JWT_SECRET!,
+});
 
 fastify.register(cors, {
     origin: true,
     credentials: true,
-})
+});
 
 fastify.register(helmet, {
-    contentSecurityPolicy: false
+    contentSecurityPolicy: false,
 });
 
 fastify.register(swagger, {
@@ -39,12 +39,12 @@ fastify.register(swagger, {
         info: {
             title: 'Syntax Wear API',
             version: '1.0.0',
-            description: 'API para o e-commerce Syntax Wear',
+            description: 'API para o e-commerce Syntax Wear.',
         },
         servers: [
             {
                 url: `http://localhost:${PORT}`,
-                description: 'Servidor de desenvolvimento',
+                description: 'Servidor de desenvolvimento.',
             },
         ],
         components: {
@@ -53,30 +53,30 @@ fastify.register(swagger, {
                     type: 'http',
                     scheme: 'bearer',
                     bearerFormat: 'JWT',
-                    description: 'Autenticação via token JWT',
+                    description: 'Autenticação via token JWT.',
                 },
             },
         },
-    },
-})
+        },
+        });
 
-fastify.register(productsRoutes, { prefix: '/products' });
+        fastify.register(productsRoutes, { prefix: '/products' });
 
-fastify.register(authRoutes, { prefix: '/auth' });
+        fastify.register(authRoutes, { prefix: '/auth' });
 
-fastify.get('/', async () => {
-    return {
-        message: 'E-commerce Syntax Wear API',
+        fastify.get('/', async () => {
+        return {
+        message: 'E-commerce Syntax Wear API.',
         version: '1.0.0',
         status: 'running',
-    }
-});
+        };
+        });
 
 fastify.get('/health', async () => {
     return {
         status: 'ok',
         timestamp: new Date().toISOString(),
-    }
+    };
 });
 
 fastify.setErrorHandler(errorHandler);
@@ -87,19 +87,19 @@ async function registerApiDocs() {
     fastify.register(scalar, {
         routePrefix: '/api-docs',
         configuration: {
-            theme: 'default'
+            theme: 'default',
         },
-    })
+    });
 }
 
 async function startServer() {
     await registerApiDocs();
 
     try {
-        await fastify.listen({ port: PORT, host: HOST })
+        await fastify.listen({ port: PORT, host: HOST });
     } catch (err) {
-        fastify.log.error(err)
-        process.exit(1)
+        fastify.log.error(err);
+        process.exit(1);
     }
 }
 
