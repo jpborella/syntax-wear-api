@@ -2,6 +2,11 @@ import { AuthRequest, RegisterRequest } from "../types";
 import { prisma } from "../utils/prisma";
 import bcrypt from "bcrypt";
 
+const parseBrDate = (value: string) => {
+    const [day, month, year] = value.split("/");
+    return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+};
+
 export const registerUser = async (payload: RegisterRequest) => {
     const existingUser = await prisma.user.findFirst({
         where: payload.cpf
@@ -27,7 +32,7 @@ export const registerUser = async (payload: RegisterRequest) => {
             email: payload.email,
             password: hashedPassword,
             cpf: payload.cpf,
-            birthDate: payload.birthDate ? new Date(`${payload.birthDate}T00:00:00.000Z`) : undefined,
+            birthDate: payload.birthDate ? parseBrDate(payload.birthDate) : undefined,
             phone: payload.phone,
             role: "USER",
         },

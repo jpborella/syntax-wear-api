@@ -1,4 +1,3 @@
-import Fastify from 'fastify'
 import 'dotenv/config'
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
@@ -6,7 +5,8 @@ import swagger from '@fastify/swagger';
 import productsRoutes from './routes/products.routes';
 import jwt from '@fastify/jwt';
 import authRoutes from './routes/auth.routes';
-
+import Fastify from 'fastify';
+import { errorHandler } from './middlewares/error.middleware';
 
 const PORT = parseInt(process.env.PORT ?? '3000');
 const HOST = process.env.HOST ?? '0.0.0.0';
@@ -78,6 +78,8 @@ fastify.get('/health', async () => {
         timestamp: new Date().toISOString(),
     }
 });
+
+fastify.setErrorHandler(errorHandler);
 
 async function registerApiDocs() {
     const { default: scalar } = await import('@scalar/fastify-api-reference');
