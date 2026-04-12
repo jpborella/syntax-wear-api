@@ -41,7 +41,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         description: "Não autorizado",
                         type: "object",
                         properties: {
-                            message: { type: "string" },
+                            error: { type: "string" },
                         },
                     },
                 },
@@ -115,7 +115,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         description: "Não autorizado",
                         type: "object",
                         properties: {
-                            message: { type: "string" },
+                            error: { type: "string" },
                         },
                     },
                 },
