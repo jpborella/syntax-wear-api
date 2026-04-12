@@ -2,19 +2,19 @@ import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import z, { ZodError } from "zod";
 
 export const errorHandler = (error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
-    if(error instanceof ZodError) {
+    if (error instanceof ZodError) {
         return reply.status(400).send({
             message: 'Erro de validação (Zod).',
             errors: z.treeifyError(error)
         });
     }
 
-    if ("validation" in error) {
+    if (error.code === 'FST_ERR_JWT_INVALID') {
         return reply.status(400).send({
             message: 'Erro de validação (Fastify).',
-            errors: error.validation,
+            errors: error.validation
         });
     }
 
-    return reply.status(500).send({ message: 'Erro interno do servidor.' });
+    return reply.status(500).send({ message: 'Erro interno do servidor.', debug: error.message });
 };

@@ -35,3 +35,16 @@ export const productFiltersSchema = z.object({
     sortBy: z.enum(['price', 'name', 'createdAt'], { message: "Ordenar por deve ser: price, name ou createdAt." }).optional(),
     sortOrder: z.enum(['asc', 'desc'], { message: "Ordem de classificação deve ser: asc ou desc." }).optional(),
 });
+
+export const createProductSchema = z.object({
+    name: z.string().trim().min(2, "O nome é obrigatório."),
+    price: z.coerce.number().positive("O preço deve ser um número positivo."),
+    description: z.string().trim().min(10, "A descrição deve ter pelo menos 10 caracteres."),
+    colors: z.array(z.string().trim()).optional(),
+    sizes: z.array(z.string().trim()).optional(),
+    slug: z.string().trim().min(2, "O slug é obrigatório."),
+    stock: z.coerce.number().int().min(0, "O estoque não pode ser negativo."),
+    active: z.boolean(),
+    images: z.array(z.string()).optional(),
+    categoryId: z.coerce.number().int().positive("A categoria é obrigatória."),
+});

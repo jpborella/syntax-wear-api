@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { getProduct, listProducts } from "../controllers/products.controller";
+import { getProduct, listProducts, createNewProduct } from "../controllers/products.controller";
 import { authenticate } from "../middlewares/auth.middlewares";
 
 export default async function productsRoutes(fastify: FastifyInstance) {
@@ -36,7 +36,6 @@ export default async function productsRoutes(fastify: FastifyInstance) {
                                         name: { type: "string" },
                                         price: { type: "number" },
                                         description: { type: "string" },
-                                        slug: { type: "string" },
                                         sku: { type: "string" },
                                         images: { type: "array", items: { type: "string", format: "uri" } },
                                         sizes: { type: "array", items: { type: "string" } },
@@ -107,7 +106,6 @@ export default async function productsRoutes(fastify: FastifyInstance) {
                             size: { type: "array", items: { type: "string" } },
                             images: { type: "array", items: { type: "string", format: "uri" } },
                             colors: { type: "array", items: { type: "string" } },
-                            slug: { type: "string" },
                             active: { type: "boolean" },
                             createdAt: { type: "string", format: "date-time" },
                             updatedAt: { type: "string", format: "date-time" },
@@ -131,5 +129,40 @@ export default async function productsRoutes(fastify: FastifyInstance) {
             },
         },
         getProduct
+    );
+
+    fastify.post(
+        "/",
+        {
+            schema: {
+                tags: ["Products"],
+                description: "Cria um novo produto.",
+                body: {
+                    type: "object",
+                    required: ["name", "price", "description", "active", "categoryId"],
+                    properties: {
+                        name: { type: "string" },
+                        description: { type: "string" },
+                        price: { type: "number" },
+                        stock: { type: "number" },
+                        active: { type: "boolean" },
+                        categoryId: { type: "number" },
+                        colors: { type: "array", items: { type: "string" } },
+                        images: { type: "array", items: { type: "string" } },
+                        sizes: { type: "array", items: { type: "string" } },
+                    },
+                },
+                response: {
+                    201: {
+                        description: "Produto criado com sucesso.",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                        },
+                    },
+                },
+            },
+        },
+        createNewProduct
     );
 }
