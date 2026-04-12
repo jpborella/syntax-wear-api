@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { CreateProduct, ProductFilters } from "../types";
-import { getProducts, getProductById, saveProduct } from "../services/product.services";
-import { createProductSchema, productFiltersSchema } from "../utils/validator";
+import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from "../services/product.services";
+import { createProductSchema, deleteProductSchema, productFiltersSchema, updateProductSchema } from "../utils/validator";
 import slugify from "slugify";
 
 
@@ -25,7 +25,33 @@ export const createNewProduct = async (request: FastifyRequest<{ Body: CreatePro
     body.slug = slugify(body.name, { lower: true, strict: true, locale: 'pt' });
 
     const validate = createProductSchema.parse(body);
-    await saveProduct(validate);
+    await createProduct(validate);
 
     reply.status(201).send({message: 'Produto criado com sucesso.'});
+};
+
+export const updateExistingProduct = async (request: FastifyRequest<{ Params: { id: string }; Body: Partial<CreateProduct> }>, reply: FastifyReply) => {
+	const { id } = request.params;
+	const body = request.body;
+
+	const validate = updateProductSchema.parse(body);
+
+	if (validate.name) {
+		validate.slug = slugify(validate.name, {
+			lower: true,
+			strict: true,
+			locale: "pt",
+		});
+	}
+
+	const product = await updateProduct(Number(id), validate);
+	reply.status(200).send(product);
+};
+
+export const deleteExistingProduct = async (request: FastifyRequest<{ Params: { id: number } }>, reply: FastifyReply) => {
+	const { id } = request.params;
+
+	const validate = deleteProductSchema.parse({ id });
+
+	await deleteProduct(validate.id);
 };
