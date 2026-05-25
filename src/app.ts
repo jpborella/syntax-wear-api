@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import swagger from '@fastify/swagger';
 import productsRoutes from './routes/products.routes';
+import categoriesRoutes from './routes/categories.routes';
 import jwt from '@fastify/jwt';
 import authRoutes from './routes/auth.routes';
 import Fastify from 'fastify';
@@ -62,6 +63,8 @@ fastify.register(swagger, {
         });
 
         fastify.register(productsRoutes, { prefix: '/products' });
+
+        fastify.register(categoriesRoutes, { prefix: '/admin/categories' });
 
         fastify.register(authRoutes, { prefix: '/auth' });
 

@@ -64,3 +64,29 @@ export const updateProductSchema = z.object({
 export const deleteProductSchema = z.object({
     id: z.number().int().min(1, "ID inválido"),
 });
+
+export const createCategorySchema = z.object({
+    name: z.string().trim().min(2, "O nome e obrigatorio."),
+    description: z
+        .string()
+        .trim()
+        .min(2, "A descricao deve ter pelo menos 2 caracteres.")
+        .optional(),
+    slug: z.string().trim().min(2, "O slug e obrigatorio."),
+    active: z.boolean(),
+});
+
+export const updateCategorySchema = z.object({
+    name: z.string().trim().min(2, "Nome e obrigatorio.").optional(),
+    description: z
+        .string()
+        .trim()
+        .min(2, "Descricao deve ter pelo menos 2 caracteres.")
+        .optional(),
+    slug: z.string().trim().min(2, "Slug e obrigatorio.").optional(),
+    active: z.boolean().optional(),
+});
+
+export const categoryIdSchema = z.object({
+    id: z.coerce.number().int().positive("ID invalido."),
+});

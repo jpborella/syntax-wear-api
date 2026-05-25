@@ -43,3 +43,17 @@ export interface UpdateProduct extends Partial<CreateProduct> {
     stock?: number;
     active?: boolean;
 }
+
+export interface CreateCategory {
+    name: string;
+    description?: string;
+    slug: string;
+    active: boolean;
+}
+
+export interface UpdateCategory extends Partial<CreateCategory> {
+    name?: string;
+    description?: string;
+    slug?: string;
+    active?: boolean;
+}
