@@ -91,6 +91,7 @@ export const getProducts = async (filter: ProductFilters) => {
 export const getProductById = async (id: number) => {
     const product = await prisma.product.findFirst({
         where: { id, active: true },
+        include: { category: true },
     });
     if (!product) {
         throw new Error("Produto não encontrado.");

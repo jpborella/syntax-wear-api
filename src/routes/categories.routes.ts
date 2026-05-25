@@ -9,7 +9,7 @@ import {
 import { authenticate } from "../middlewares/auth.middleware";
 
 export default async function categoryRoutes(fastify: FastifyInstance) {
-    fastify.addHook("onRequest", authenticate);
+    //fastify.addHook("onRequest", authenticate);
 
     fastify.get(
         "/",

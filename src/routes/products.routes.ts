@@ -3,7 +3,7 @@ import { createNewProduct, getProduct, listProducts, updateExistingProduct, dele
 import { authenticate } from "../middlewares/auth.middleware";
 
 export default async function productRoutes(fastify: FastifyInstance) {
-    fastify.addHook("onRequest", authenticate);
+    //fastify.addHook("onRequest", authenticate);
     fastify.get(
         "/",
         {
@@ -120,6 +120,19 @@ export default async function productRoutes(fastify: FastifyInstance) {
                             slug: { type: "string" },
                             active: { type: "boolean" },
                             updatedAt: { type: "string", format: "date-time" },
+                            categoryID: { type: "number" },
+                            category: {
+                                type: "object",
+                                properties: {
+                                    id: { type: "number" },
+                                    name: { type: "string" },
+                                    description: { type: "string", nullable: true },
+                                    slug: { type: "string" },
+                                    active: { type: "boolean" },
+                                    createdAt: { type: "string", format: "date-time" },
+                                    updatedAt: { type: "string", format: "date-time" },
+                                },
+                            },
                         },
                     },
                     400: {
@@ -131,7 +144,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         },
                     },
                     401: {
-                        description: "Não autorizado",
+                        description: "Nao autorizado",
                         type: "object",
                         properties: {
                             error: { type: "string" },
@@ -159,11 +172,12 @@ export default async function productRoutes(fastify: FastifyInstance) {
                 description: "Criar um novo produto",
                 body: {
                     type: "object",
-                    required: ["name", "description", "price"],
+                    required: ["name", "description", "price", "categoryId"],
                     properties: {
                         name: { type: "string", description: "Nome do produto" },
                         description: { type: "string", description: "Descrição do produto" },
                         price: { type: "number", description: "Preço do produto" },
+                        categoryId: { type: "number", description: "ID da categoria" },
                         stock: { type: "number", description: "Quantidade em estoque" },
                         colors: {
                             type: "array",
@@ -232,6 +246,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         name: { type: "string" },
                         description: { type: "string" },
                         price: { type: "number" },
+                        categoryId: { type: "number", description: "ID da categoria" },
                         active: { type: "boolean" },
                         stock: { type: "number" },
                         colors: {

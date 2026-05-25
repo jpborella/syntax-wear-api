@@ -23,6 +23,7 @@ export const createNewProduct = async (request: FastifyRequest<{ Body: CreatePro
     const body = request.body;
 
     body.slug = slugify(body.name, { lower: true, strict: true, locale: 'pt' });
+	body.active = body.active ?? true;
 
     const validate = createProductSchema.parse(body);
     await createProduct(validate);
