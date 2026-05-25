@@ -9,6 +9,15 @@ export const errorHandler = (error: FastifyError, request: FastifyRequest, reply
         });
     }
 
+    if (error.code === 'FST_ERR_CTP_EMPTY_JSON_BODY') {
+        return reply.status(400).send({
+            message: 'Erro de validação (Fastify).',
+            errors: {
+                body: 'O corpo da requisicao nao pode ser vazio.',
+            },
+        });
+    }
+
     if (error.code === 'FST_ERR_JWT_INVALID') {
         return reply.status(400).send({
             message: 'Erro de validação (Fastify).',

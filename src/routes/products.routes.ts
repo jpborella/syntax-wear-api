@@ -13,28 +13,38 @@ export default async function productRoutes(fastify: FastifyInstance) {
                 response: {
                     200: {
                         description: "Lista de produtos",
-                        type: "array",
-                        items: {
-                            type: "object",
-                            properties: {
-                                id: { type: "string" },
-                                name: { type: "string" },
-                                description: { type: "string" },
-                                price: { type: "number" },
-                                colors: {
-                                    type: "array",
-                                    items: { type: "string" },
+                        type: "object",
+                        properties: {
+                            data: {
+                                type: "array",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        id: { type: "number" },
+                                        name: { type: "string" },
+                                        description: { type: "string" },
+                                        price: { type: "number" },
+                                        colors: {
+                                            type: "array",
+                                            items: { type: "string" },
+                                        },
+                                        createdAt: { type: "string", format: "date-time" },
+                                        updatedAt: { type: "string", format: "date-time" },
+                                    },
                                 },
-                                createdAt: { type: "string", format: "date-time" },
-                                updatedAt: { type: "string", format: "date-time" },
                             },
+                            total: { type: "number" },
+                            page: { type: "number" },
+                            limit: { type: "number" },
+                            totalPages: { type: "number" },
                         },
                     },
                     400: {
-                        description: "Requisição inválida",
+                        description: "Erro de validacao",
                         type: "object",
                         properties: {
                             message: { type: "string" },
+                            errors: { type: "object", additionalProperties: true },
                         },
                     },
                     401: {
@@ -42,6 +52,14 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             error: { type: "string" },
+                        },
+                    },
+                    500: {
+                        description: "Erro interno do servidor",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },
@@ -105,10 +123,11 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         },
                     },
                     400: {
-                        description: "Requisição inválida",
+                        description: "Erro de validacao",
                         type: "object",
                         properties: {
                             message: { type: "string" },
+                            errors: { type: "object", additionalProperties: true },
                         },
                     },
                     401: {
@@ -116,6 +135,14 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             error: { type: "string" },
+                        },
+                    },
+                    500: {
+                        description: "Erro interno do servidor",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },
@@ -168,7 +195,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             message: { type: "string" },
-                            errors: { type: "object" },
+                            errors: { type: "object", additionalProperties: true },
                         },
                     },
                     500: {
@@ -176,6 +203,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },
@@ -238,15 +266,8 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         description: "Erro de validação",
                         type: "object",
                         properties: {
-                            error: { type: "string" },
-                            details: { type: "array", nullable: true },
-                        },
-                    },
-                    404: {
-                        description: "Produto não encontrado",
-                        type: "object",
-                        properties: {
-                            error: { type: "string" },
+                            message: { type: "string" },
+                            errors: { type: "object", additionalProperties: true },
                         },
                     },
                     401: {
@@ -254,6 +275,14 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             error: { type: "string" },
+                        },
+                    },
+                    500: {
+                        description: "Erro interno do servidor",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },
@@ -280,18 +309,12 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         description: "Produto deletado com sucesso",
                         type: "null",
                     },
-                    404: {
-                        description: "Produto não encontrado",
-                        type: "object",
-                        properties: {
-                            message: { type: "string" },
-                        },
-                    },
                     500: {
                         description: "Erro interno do servidor",
                         type: "object",
                         properties: {
                             message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },

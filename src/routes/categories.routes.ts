@@ -35,10 +35,11 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
                         },
                     },
                     400: {
-                        description: "Requisicao invalida",
+                        description: "Erro de validacao",
                         type: "object",
                         properties: {
                             message: { type: "string" },
+                            errors: { type: "object", additionalProperties: true },
                         },
                     },
                     401: {
@@ -46,6 +47,14 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             error: { type: "string" },
+                        },
+                    },
+                    500: {
+                        description: "Erro interno do servidor",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },
@@ -83,10 +92,11 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
                         },
                     },
                     400: {
-                        description: "Requisicao invalida",
+                        description: "Erro de validacao",
                         type: "object",
                         properties: {
                             message: { type: "string" },
+                            errors: { type: "object", additionalProperties: true },
                         },
                     },
                     401: {
@@ -96,11 +106,12 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
                             error: { type: "string" },
                         },
                     },
-                    404: {
-                        description: "Categoria nao encontrada",
+                    500: {
+                        description: "Erro interno do servidor",
                         type: "object",
                         properties: {
                             message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },
@@ -144,7 +155,7 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             message: { type: "string" },
-                            errors: { type: "object" },
+                            errors: { type: "object", additionalProperties: true },
                         },
                     },
                     401: {
@@ -152,6 +163,14 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             error: { type: "string" },
+                        },
+                    },
+                    500: {
+                        description: "Erro interno do servidor",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },
@@ -200,15 +219,8 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
                         description: "Erro de validacao",
                         type: "object",
                         properties: {
-                            error: { type: "string" },
-                            details: { type: "array", nullable: true },
-                        },
-                    },
-                    404: {
-                        description: "Categoria nao encontrada",
-                        type: "object",
-                        properties: {
-                            error: { type: "string" },
+                            message: { type: "string" },
+                            errors: { type: "object", additionalProperties: true },
                         },
                     },
                     401: {
@@ -216,6 +228,14 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             error: { type: "string" },
+                        },
+                    },
+                    500: {
+                        description: "Erro interno do servidor",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },
@@ -243,18 +263,19 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
                         description: "Categoria desativada com sucesso",
                         type: "null",
                     },
-                    404: {
-                        description: "Categoria nao encontrada",
-                        type: "object",
-                        properties: {
-                            message: { type: "string" },
-                        },
-                    },
                     401: {
                         description: "Nao autorizado",
                         type: "object",
                         properties: {
                             error: { type: "string" },
+                        },
+                    },
+                    500: {
+                        description: "Erro interno do servidor",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                            debug: { type: "string" },
                         },
                     },
                 },

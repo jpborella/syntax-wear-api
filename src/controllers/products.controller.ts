@@ -54,4 +54,5 @@ export const deleteExistingProduct = async (request: FastifyRequest<{ Params: { 
 	const validate = deleteProductSchema.parse({ id });
 
 	await deleteProduct(validate.id);
+	reply.status(204).send();
 };
