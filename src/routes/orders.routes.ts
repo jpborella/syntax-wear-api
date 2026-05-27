@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { authenticate } from "../middlewares/auth.middleware";
-import { createOrderHandler, getOrderHandler, listOrdersHandler, updateOrderHandler } from "../controllers/orders.controller";
+import { createOrderHandler, deleteOrderHandler, getOrderHandler, listOrdersHandler, updateOrderHandler } from "../controllers/orders.controller";
 
 export default async function orderRoutes(fastify: FastifyInstance) {
     //fastify.addHook("onRequest", authenticate);
@@ -342,5 +342,56 @@ export default async function orderRoutes(fastify: FastifyInstance) {
             },
         },
         updateOrderHandler
+    );
+
+    fastify.delete(
+        "/:id",
+        {
+            schema: {
+                tags: ["Orders"],
+                description: "Deletar pedido",
+                params: {
+                    type: "object",
+                    properties: {
+                        id: { type: "string" },
+                    },
+                    required: ["id"],
+                },
+                response: {
+                    200: {
+                        description: "Pedido cancelado com sucesso",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                        },
+                    },
+                    400: {
+                        description: "Erro de validacao",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                            errors: { type: "object", additionalProperties: true },
+                        },
+                    },
+                    401: {
+                        description: "Nao autorizado",
+                        type: "object",
+                        properties: {
+                            error: { type: "string" },
+                        },
+                    },
+                    500: {
+                        description: "Erro interno do servidor",
+                        type: "object",
+                        properties: {
+                            message: { type: "string" },
+                            debug: { type: "string" },
+                        },
+                    },
+                },
+                security: [{ bearerAuth: [] }],
+            },
+        },
+        deleteOrderHandler
     );
 }

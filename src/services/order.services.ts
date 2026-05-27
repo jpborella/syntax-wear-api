@@ -249,3 +249,7 @@ export const updateOrderStatus = async (id: number, status: OrderStatus) => {
 
     return updatedOrder;
 };
+
+export const deleteOrder = async (id: number) => {
+    await updateOrderStatus(id, "CANCELLED");
+};
