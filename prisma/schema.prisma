@@ -19,6 +19,7 @@ model User {
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     role      Role      @default(USER)
+    orders    Order[]
 
     @@map("users")
 }
@@ -55,9 +56,56 @@ model Product {
     active      Boolean  @default(true)
     categoryId  Int
     category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    orderItems  OrderItem[]
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
     @@index([categoryId])
     @@map("products")
+}
+
+enum OrderStatus {
+    PENDING
+    PAID
+    SHIPPED
+    DELIVERED
+    CANCELLED
+}
+
+enum PaymentMethod {
+    PIX
+    CARD
+    BOLETO
+}
+
+model Order {
+    id              Int          @id @default(autoincrement())
+    userId          Int?
+    user            User?        @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    total           Decimal
+    status          OrderStatus  @default(PENDING)
+    paymentMethod   PaymentMethod
+    shippingAddress Json
+    items           OrderItem[]
+    createdAt       DateTime     @default(now())
+    updatedAt       DateTime     @updatedAt
+
+    @@index([userId])
+    @@map("orders")
+}
+
+model OrderItem {
+    id        Int     @id @default(autoincrement())
+    orderId   Int
+    order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    productId Int
+    product   Product @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    price     Decimal
+    quantity  Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([orderId])
+    @@index([productId])
+    @@map("order_items")
 }

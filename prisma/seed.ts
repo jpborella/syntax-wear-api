@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
+import { OrderStatus, PaymentMethod, Prisma, PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const connectionString = process.env.DATABASE_URL;
@@ -164,6 +164,49 @@ const products = [
     },
 ];
 
+const orderSeeds = [
+    {
+        seedKey: "order-seed-1",
+        status: OrderStatus.PENDING,
+        paymentMethod: PaymentMethod.PIX,
+        shippingAddress: {
+            seedKey: "order-seed-1",
+            cep: "01001000",
+            street: "Praca da Se",
+            number: "100",
+            complement: "Sala 1",
+            neighborhood: "Se",
+            city: "Sao Paulo",
+            state: "SP",
+            country: "BR",
+        },
+        items: [
+            { productSlug: "camiseta-oversized-code-black", quantity: 2 },
+            { productSlug: "meia-mid-crew-pixel", quantity: 3 },
+        ],
+    },
+    {
+        seedKey: "order-seed-2",
+        status: OrderStatus.PAID,
+        paymentMethod: PaymentMethod.CARD,
+        shippingAddress: {
+            seedKey: "order-seed-2",
+            cep: "01311000",
+            street: "Avenida Paulista",
+            number: "1500",
+            complement: "Conjunto 101",
+            neighborhood: "Bela Vista",
+            city: "Sao Paulo",
+            state: "SP",
+            country: "BR",
+        },
+        items: [
+            { productSlug: "moletom-full-zip-binary", quantity: 1 },
+            { productSlug: "calca-jogger-stack", quantity: 1 },
+        ],
+    },
+];
+
 async function main() {
     for (const category of categories) {
         await prisma.category.upsert({
@@ -189,8 +232,75 @@ async function main() {
         });
     }
 
+    const orderProductSlugs = Array.from(
+        new Set(orderSeeds.flatMap((order) => order.items.map((item) => item.productSlug)))
+    );
+
+    const seedProducts = await prisma.product.findMany({
+        where: { slug: { in: orderProductSlugs } },
+        select: { id: true, slug: true, price: true },
+    });
+
+    const productMap = new Map(seedProducts.map((product) => [product.slug, product]));
+
+    for (const orderSeed of orderSeeds) {
+        const existingOrder = await prisma.order.findFirst({
+            where: {
+                shippingAddress: {
+                    path: ["seedKey"],
+                    equals: orderSeed.seedKey,
+                },
+            },
+        });
+
+        if (existingOrder) {
+            continue;
+        }
+
+        const missingSlugs = orderSeed.items
+            .filter((item) => !productMap.has(item.productSlug))
+            .map((item) => item.productSlug);
+
+        if (missingSlugs.length > 0) {
+            console.warn(
+                `Seed de pedidos ignorado (${orderSeed.seedKey}). Produtos ausentes: ${missingSlugs.join(", ")}`
+            );
+            continue;
+        }
+
+        let total = new Prisma.Decimal(0);
+        const itemsData = orderSeed.items.map((item) => {
+            const product = productMap.get(item.productSlug)!;
+            const price = product.price;
+
+            total = total.plus(price.mul(item.quantity));
+
+            return {
+                product: { connect: { id: product.id } },
+                price,
+                quantity: item.quantity,
+            };
+        });
+
+        await prisma.order.create({
+            data: {
+                status: orderSeed.status,
+                paymentMethod: orderSeed.paymentMethod,
+                shippingAddress: orderSeed.shippingAddress,
+                total,
+                items: {
+                    create: itemsData,
+                },
+            },
+        });
+    }
+
     const totalProducts = await prisma.product.count();
-    console.log(`Seed finalizado. Produtos na base: ${totalProducts}`);
+    const totalOrders = await prisma.order.count();
+    const totalOrderItems = await prisma.orderItem.count();
+    console.log(
+        `Seed finalizado. Produtos: ${totalProducts}. Pedidos: ${totalOrders}. Itens: ${totalOrderItems}`
+    );
 }
 
 main()
