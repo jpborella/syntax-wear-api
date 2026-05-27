@@ -91,3 +91,18 @@ export const updateCategorySchema = z.object({
 export const categoryIdSchema = z.object({
     id: z.coerce.number().int().positive("ID invalido."),
 });
+
+export const orderFiltersSchema = z.object({
+    page: z.coerce.number().int().positive("Pagina deve ser um numero positivo.").optional(),
+    limit: z.coerce.number().int().positive("Limite deve ser um numero positivo.").optional(),
+    status: z
+        .enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"], {
+            message: "Status invalido.",
+        })
+        .optional(),
+    userId: z.coerce.number().int().positive("Usuario invalido.").optional(),
+});
+
+export const orderIdSchema = z.object({
+    id: z.coerce.number().int().positive("ID invalido."),
+});

@@ -4,6 +4,7 @@ import helmet from '@fastify/helmet';
 import swagger from '@fastify/swagger';
 import productsRoutes from './routes/products.routes';
 import categoriesRoutes from './routes/categories.routes';
+import ordersRoutes from './routes/orders.routes';
 import jwt from '@fastify/jwt';
 import authRoutes from './routes/auth.routes';
 import Fastify from 'fastify';
@@ -65,6 +66,8 @@ fastify.register(swagger, {
         fastify.register(productsRoutes, { prefix: '/products' });
 
         fastify.register(categoriesRoutes, { prefix: '/admin/categories' });
+
+        fastify.register(ordersRoutes, { prefix: '/orders' });
 
         fastify.register(authRoutes, { prefix: '/auth' });
 

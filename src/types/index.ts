@@ -57,3 +57,10 @@ export interface UpdateCategory extends Partial<CreateCategory> {
     slug?: string;
     active?: boolean;
 }
+
+export interface OrderFilters {
+    page?: number;
+    limit?: number;
+    status?: 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+    userId?: number;
+}
