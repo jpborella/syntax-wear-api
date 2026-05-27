@@ -58,9 +58,38 @@ export interface UpdateCategory extends Partial<CreateCategory> {
     active?: boolean;
 }
 
+export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+
 export interface OrderFilters {
     page?: number;
     limit?: number;
-    status?: 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+    status?: OrderStatus;
     userId?: number;
+}
+
+export interface OrderItemInput {
+    productId: number;
+    quantity: number;
+}
+
+export interface ShippingAddress {
+    cep: string;
+    street: string;
+    number: string;
+    complement?: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    country: string;
+}
+
+export interface CreateOrder {
+    userId?: number;
+    paymentMethod: 'PIX' | 'CARD' | 'BOLETO';
+    shippingAddress: ShippingAddress;
+    items: OrderItemInput[];
+}
+
+export interface UpdateOrder {
+    status: OrderStatus;
 }

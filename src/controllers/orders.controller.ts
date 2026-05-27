@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { OrderFilters } from "../types";
-import { getOrderById, listOrders } from "../services/order.services";
-import { orderFiltersSchema, orderIdSchema } from "../utils/validator";
+import { CreateOrder, OrderFilters, UpdateOrder } from "../types";
+import { createOrder, getOrderById, listOrders, updateOrderStatus } from "../services/order.services";
+import { createOrderSchema, orderFiltersSchema, orderIdSchema, updateOrderSchema } from "../utils/validator";
 
 export const listOrdersHandler = async (
     request: FastifyRequest<{ Querystring: OrderFilters }>,
@@ -18,5 +18,24 @@ export const getOrderHandler = async (
 ) => {
     const params = orderIdSchema.parse({ id: request.params.id });
     const order = await getOrderById(params.id);
+    reply.status(200).send(order);
+};
+
+export const createOrderHandler = async (
+    request: FastifyRequest<{ Body: CreateOrder }>,
+    reply: FastifyReply
+) => {
+    const payload = createOrderSchema.parse(request.body);
+    const order = await createOrder(payload);
+    reply.status(201).send({ message: "Pedido criado com sucesso.", data: order });
+};
+
+export const updateOrderHandler = async (
+    request: FastifyRequest<{ Params: { id: string }; Body: UpdateOrder }>,
+    reply: FastifyReply
+) => {
+    const params = orderIdSchema.parse({ id: request.params.id });
+    const payload = updateOrderSchema.parse(request.body);
+    const order = await updateOrderStatus(params.id, payload.status);
     reply.status(200).send(order);
 };

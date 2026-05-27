@@ -106,3 +106,34 @@ export const orderFiltersSchema = z.object({
 export const orderIdSchema = z.object({
     id: z.coerce.number().int().positive("ID invalido."),
 });
+
+export const orderItemSchema = z.object({
+    productId: z.coerce.number().int().positive("Produto invalido."),
+    quantity: z.coerce.number().int().positive("Quantidade deve ser maior que zero."),
+});
+
+export const shippingAddressSchema = z.object({
+    cep: z.string().trim().min(8, "CEP invalido."),
+    street: z.string().trim().min(2, "Rua e obrigatoria."),
+    number: z.string().trim().min(1, "Numero e obrigatorio."),
+    complement: z.string().trim().optional(),
+    neighborhood: z.string().trim().min(2, "Bairro e obrigatorio."),
+    city: z.string().trim().min(2, "Cidade e obrigatoria."),
+    state: z.string().trim().min(2, "Estado e obrigatorio."),
+    country: z.string().trim().min(2, "Pais e obrigatorio."),
+});
+
+export const createOrderSchema = z.object({
+    userId: z.coerce.number().int().positive("Usuario invalido.").optional(),
+    paymentMethod: z.enum(["PIX", "CARD", "BOLETO"], {
+        message: "Metodo de pagamento invalido.",
+    }),
+    shippingAddress: shippingAddressSchema,
+    items: z.array(orderItemSchema).min(1, "Itens do pedido sao obrigatorios."),
+});
+
+export const updateOrderSchema = z.object({
+    status: z.enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"], {
+        message: "Status invalido.",
+    }),
+});
