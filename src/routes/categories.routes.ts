@@ -7,10 +7,9 @@ import {
     updateExistingCategory,
 } from "../controllers/categories.controller";
 import { authenticate } from "../middlewares/auth.middleware";
+import { CreateCategory, UpdateCategory } from "../types";
 
 export default async function categoryRoutes(fastify: FastifyInstance) {
-    //fastify.addHook("onRequest", authenticate);
-
     fastify.get(
         "/",
         {
@@ -121,9 +120,10 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
         getCategory
     );
 
-    fastify.post(
+    fastify.post<{ Body: CreateCategory }>(
         "/",
         {
+            onRequest: [authenticate],
             schema: {
                 tags: ["Categories"],
                 description: "Criar categoria",
@@ -180,9 +180,10 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
         createNewCategory
     );
 
-    fastify.put(
+    fastify.put<{ Params: { id: string }; Body: UpdateCategory }>(
         "/:id",
         {
+            onRequest: [authenticate],
             schema: {
                 tags: ["Categories"],
                 description: "Atualizar categoria",
@@ -245,9 +246,10 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
         updateExistingCategory
     );
 
-    fastify.delete(
+    fastify.delete<{ Params: { id: string } }>(
         "/:id",
         {
+            onRequest: [authenticate],
             schema: {
                 tags: ["Categories"],
                 description: "Desativar categoria",

@@ -14,6 +14,20 @@ import {
     updateCategorySchema,
 } from "../utils/validator";
 
+const ensureAdmin = (request: FastifyRequest, reply: FastifyReply) => {
+    if (!request.authUser) {
+        reply.status(401).send({ error: "Nao autenticado." });
+        return false;
+    }
+
+    if (request.authUser.role !== "ADMIN") {
+        reply.status(403).send({ error: "Acesso negado." });
+        return false;
+    }
+
+    return true;
+};
+
 export const listCategories = async (
     _request: FastifyRequest,
     reply: FastifyReply
@@ -37,6 +51,10 @@ export const createNewCategory = async (
     request: FastifyRequest<{ Body: CreateCategory }>,
     reply: FastifyReply
 ) => {
+    if (!ensureAdmin(request, reply)) {
+        return;
+    }
+
     const body = request.body;
 
     body.slug = slugify(body.name, { lower: true, strict: true, locale: "pt" });
@@ -52,6 +70,10 @@ export const updateExistingCategory = async (
     request: FastifyRequest<{ Params: { id: string }; Body: UpdateCategory }>,
     reply: FastifyReply
 ) => {
+    if (!ensureAdmin(request, reply)) {
+        return;
+    }
+
     const { id } = request.params;
     const body = request.body;
 
@@ -74,6 +96,10 @@ export const deleteExistingCategory = async (
     request: FastifyRequest<{ Params: { id: string } }>,
     reply: FastifyReply
 ) => {
+    if (!ensureAdmin(request, reply)) {
+        return;
+    }
+
     const { id } = request.params;
     const params = categoryIdSchema.parse({ id });
 

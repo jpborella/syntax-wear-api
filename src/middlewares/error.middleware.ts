@@ -2,6 +2,12 @@ import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import z, { ZodError } from "zod";
 
 export const errorHandler = (error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
+    if (error.statusCode === 403) {
+        return reply.status(error.statusCode).send({
+            message: error.message,
+        });
+    }
+
     if (error instanceof ZodError) {
         return reply.status(400).send({
             message: 'Erro de validação (Zod).',

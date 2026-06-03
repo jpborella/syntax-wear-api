@@ -3,7 +3,7 @@ import { authenticate } from "../middlewares/auth.middleware";
 import { createOrderHandler, deleteOrderHandler, getOrderHandler, listOrdersHandler, updateOrderHandler } from "../controllers/orders.controller";
 
 export default async function orderRoutes(fastify: FastifyInstance) {
-    //fastify.addHook("onRequest", authenticate);
+    fastify.addHook("onRequest", authenticate);
 
     fastify.get(
         "/",

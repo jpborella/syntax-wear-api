@@ -93,3 +93,10 @@ export interface CreateOrder {
 export interface UpdateOrder {
     status: OrderStatus;
 }
+
+export type UserRole = 'USER' | 'ADMIN';
+
+export interface AuthenticatedUser {
+    id: number;
+    role: UserRole;
+}

@@ -4,6 +4,19 @@ import { getProducts, getProductById, createProduct, updateProduct, deleteProduc
 import { createProductSchema, deleteProductSchema, productFiltersSchema, updateProductSchema } from "../utils/validator";
 import slugify from "slugify";
 
+const ensureAdmin = (request: FastifyRequest, reply: FastifyReply) => {
+	if (!request.authUser) {
+		reply.status(401).send({ error: "Nao autenticado." });
+		return false;
+	}
+
+	if (request.authUser.role !== "ADMIN") {
+		reply.status(403).send({ error: "Acesso negado." });
+		return false;
+	}
+
+	return true;
+};
 
 export const listProducts = async (request: FastifyRequest<{ Querystring: ProductFilters }>, reply: FastifyReply) => {
     const validation = productFiltersSchema.parse(request.query);
@@ -19,6 +32,9 @@ export const getProduct = async (request: FastifyRequest<{ Params: { id: string 
 };
 
 export const createNewProduct = async (request: FastifyRequest<{ Body: CreateProduct }>, reply: FastifyReply) => {
+	if (!ensureAdmin(request, reply)) {
+		return;
+	}
 
     const body = request.body;
 
@@ -32,6 +48,10 @@ export const createNewProduct = async (request: FastifyRequest<{ Body: CreatePro
 };
 
 export const updateExistingProduct = async (request: FastifyRequest<{ Params: { id: string }; Body: Partial<CreateProduct> }>, reply: FastifyReply) => {
+	if (!ensureAdmin(request, reply)) {
+		return;
+	}
+
 	const { id } = request.params;
 	const body = request.body;
 
@@ -50,6 +70,10 @@ export const updateExistingProduct = async (request: FastifyRequest<{ Params: { 
 };
 
 export const deleteExistingProduct = async (request: FastifyRequest<{ Params: { id: number } }>, reply: FastifyReply) => {
+	if (!ensureAdmin(request, reply)) {
+		return;
+	}
+
 	const { id } = request.params;
 
 	const validate = deleteProductSchema.parse({ id });
