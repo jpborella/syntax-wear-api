@@ -1,6 +1,7 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, OrderStatus } from "@prisma/client";
 import { prisma } from "../utils/prisma";
-import { AuthenticatedUser, CreateOrder, OrderFilters, OrderStatus } from "../types";
+import { AuthenticatedUser, CreateOrder, OrderFilters, NotFoundError, ForbiddenError } from "../types";
+import { validateOwnership } from "../utils/auth.utils";
 
 type OrderWithItems = Prisma.OrderGetPayload<{
     include: {
@@ -8,19 +9,7 @@ type OrderWithItems = Prisma.OrderGetPayload<{
     };
 }>;
 
-const createForbiddenError = () => {
-    const error = new Error("Acesso negado.") as Error & { statusCode: number };
-    error.statusCode = 403;
-    return error;
-};
-
 const isAdmin = (user: AuthenticatedUser) => user.role === "ADMIN";
-
-const assertOrderOwnership = (orderUserId: number | null, user: AuthenticatedUser) => {
-    if (!isAdmin(user) && orderUserId !== user.id) {
-        throw createForbiddenError();
-    }
-};
 
 const findOrderWithItems = async (id: number): Promise<OrderWithItems> => {
     const order = await prisma.order.findUnique({
@@ -31,7 +20,7 @@ const findOrderWithItems = async (id: number): Promise<OrderWithItems> => {
     });
 
     if (!order) {
-        throw new Error("Pedido nao encontrado.");
+        throw new NotFoundError("Pedido nao encontrado.");
     }
 
     return order;
@@ -142,7 +131,7 @@ export const listOrders = async (filters: OrderFilters, user: AuthenticatedUser)
         }
     } else {
         if (userId && userId !== user.id) {
-            throw createForbiddenError();
+            throw new ForbiddenError("Acesso negado.");
         }
 
         where.userId = user.id;
@@ -186,10 +175,10 @@ export const getOrderById = async (id: number, user: AuthenticatedUser) => {
     });
 
     if (!order) {
-        throw new Error("Pedido nao encontrado.");
+        throw new NotFoundError("Pedido nao encontrado.");
     }
 
-    assertOrderOwnership(order.userId, user);
+    validateOwnership(user, order.userId);
 
     return order;
 };
@@ -275,7 +264,7 @@ export const updateOrderStatus = async (
     user: AuthenticatedUser
 ) => {
     if (!isAdmin(user)) {
-        throw createForbiddenError();
+        throw new ForbiddenError("Acesso negado.");
     }
 
     const order = await findOrderWithItems(id);
@@ -284,7 +273,7 @@ export const updateOrderStatus = async (
 
 export const deleteOrder = async (id: number, user: AuthenticatedUser) => {
     const order = await findOrderWithItems(id);
-    assertOrderOwnership(order.userId, user);
+    validateOwnership(user, order.userId);
 
     await applyOrderStatus(order, "CANCELLED", user);
 };

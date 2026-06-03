@@ -1,19 +1,15 @@
 import type { User } from "@prisma/client";
-import { AuthRequest, RegisterRequest } from "../types";
+import { AuthRequest, RegisterRequest, ConflictError, NotFoundError, UnauthorizedError } from "../types";
 import { prisma } from "../utils/prisma";
 import bcrypt from "bcrypt";
+import { sanitizeUser } from "../utils/auth.utils";
 
 const parseBrDate = (value: string) => {
     const [day, month, year] = value.split("/");
     return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
 };
 
-export const sanitizeUser = (user: User) => ({
-    id: user.id,
-    name: `${user.firstName} ${user.lastName}`.trim(),
-    email: user.email,
-    role: user.role,
-});
+export { sanitizeUser };
 
 export const registerUser = async (payload: RegisterRequest) => {
     const existingUser = await prisma.user.findFirst({
@@ -28,7 +24,7 @@ export const registerUser = async (payload: RegisterRequest) => {
     });
 
     if (existingUser) {
-        throw new Error(existingUser.email === payload.email ? "Email já cadastrado." : "CPF já cadastrado.");
+        throw new ConflictError(existingUser.email === payload.email ? "Email já cadastrado." : "CPF já cadastrado.");
     }
 
     const hashedPassword = await bcrypt.hash(payload.password, 10);
@@ -55,12 +51,12 @@ export const loginUser = async (data: AuthRequest) => {
     });
 
     if (!user) {
-        throw new Error("Usuário não encontrado.");
+        throw new NotFoundError("Usuário não encontrado.");
     }
 
     const isValidPassword = await bcrypt.compare(data.password, user.password);
     if (!isValidPassword) {
-        throw new Error("Senha incorreta.");
+        throw new UnauthorizedError("Senha incorreta.");
     }
 
     return user;

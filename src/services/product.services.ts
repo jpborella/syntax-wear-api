@@ -1,5 +1,5 @@
 import { prisma } from '../utils/prisma';
-import { CreateProduct, ProductFilters, UpdateProduct } from '../types';
+import { CreateProduct, ProductFilters, UpdateProduct, NotFoundError } from '../types';
 
 const ensureCategoryActive = async (categoryId: number) => {
     const category = await prisma.category.findFirst({
@@ -104,7 +104,7 @@ export const getProductById = async (id: number) => {
         include: { category: true },
     });
     if (!product) {
-        throw new Error("Produto não encontrado.");
+        throw new NotFoundError("Produto não encontrado.");
     }
     return product;
 };
@@ -130,7 +130,7 @@ export const updateProduct = async (id: number, data: UpdateProduct) => {
 	});
 
 	if (!existingProduct) {
-		throw new Error("Produto não encontrado");
+		throw new NotFoundError("Produto não encontrado.");
 	}
 
     if (data.categoryId) {
@@ -165,7 +165,7 @@ export const deleteProduct = async (id: number) => {
 	});
 
 	if(!existingProduct) {
-		throw new Error("Produto não encontrado");
+		throw new NotFoundError("Produto não encontrado.");
 	}
 
 	await prisma.product.update({

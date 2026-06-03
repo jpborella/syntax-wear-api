@@ -1,3 +1,8 @@
+import { Role, OrderStatus, PaymentMethod } from "@prisma/client";
+
+export * from "./dto";
+export * from "./errors";
+
 export interface ProductFilters {
     page?: number;
     limit?: number;
@@ -58,7 +63,7 @@ export interface UpdateCategory extends Partial<CreateCategory> {
     active?: boolean;
 }
 
-export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+export type OrderStatusType = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
 
 export interface OrderFilters {
     page?: number;

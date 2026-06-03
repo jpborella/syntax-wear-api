@@ -308,7 +308,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
         updateExistingProduct
     );
 
-    fastify.delete<{ Params: { id: number } }>(
+    fastify.delete<{ Params: { id: string } }>(
         "/:id",
         {
             onRequest: [authenticate],
@@ -318,7 +318,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
                 params: {
                     type: "object",
                     properties: {
-                        id: { type: "number", description: "ID do produto" },
+                        id: { type: "string", description: "ID do produto" },
                     },
                     required: ["id"],
                 },
