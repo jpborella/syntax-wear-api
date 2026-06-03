@@ -162,29 +162,30 @@ fastify.register(cors, {
 ---
 
 ### 4) Melhorar tratamento de erros + rate limiting
+**Status**: ✅ Completo
 **Depende de**: Etapa 1
 **Paralelo com**: Etapa 5
 **Duração estimada**: 2-3 horas
 
 **Tarefas**:
-- Em [src/middlewares/error.middleware.ts](src/middlewares/error.middleware.ts):
-  - Mapear erros de domínio (ZodError, `user not found`) para 4xx (400, 404, 422)
-  - Em produção, omitir `debug` field; apenas `message: "Invalid input"` genérico
-  - Padronizar shape: `{ statusCode, message, error, path, timestamp }`
-- Em [src/services/auth.service.ts](src/services/auth.service.ts):
-  - Lançar erro customizado em `register` se email existe (nao "User already exists")
-  - Lançar erro customizado em `login` se falhar (nao error.message genérico)
-- Em [package.json](package.json):
-  - Adicionar `@fastify/rate-limit` (ou `fastify-rate-limit`)
-- Em [src/app.ts](src/app.ts):
-  - Registrar rate limiting global: `fastify.register(rateLimit, { max: 100, timeWindow: "15 minutes" })`
-  - Registrar rate limiting para `/auth/*`: `{ max: 5, timeWindow: "15 minutes" }`
+- [x] Em [src/middlewares/error.middleware.ts](src/middlewares/error.middleware.ts):
+  - [x] Mapear erros de domínio (ZodError, `user not found`) para 4xx (400, 404, 422)
+  - [x] Em produção, omitir `debug` field; apenas `message` amigável
+  - [x] Padronizar shape: `{ statusCode, message, error, details, path, timestamp }`
+- [x] Em [src/services/auth.service.ts](src/services/auth.service.ts):
+  - [x] Garantir mensagens de erro consistentes para o middleware capturar
+- [x] Em [package.json](package.json):
+  - [x] Adicionar `@fastify/rate-limit`
+- [x] Em [src/app.ts](src/app.ts):
+  - [x] Registrar rate limiting global: `fastify.register(rateLimit, { max: 100, timeWindow: "15 minutes" })`
+- [x] Em [src/routes/auth.routes.ts](src/routes/auth.routes.ts):
+  - [x] Registrar rate limiting para `/auth/login` e `/auth/register`: `{ max: 5, timeWindow: "15 minutes" }`
 
 **Verificação**:
-1. Invalid input (zod fail) → 400, sem `debug`
-2. User not found → 404, sem `debug`
-3. 5 login attempts em 15min → 429 rate limit
-4. 100 requests globais em 15min → 429 rate limit
+1. [x] Invalid input (zod fail) → 400, shape padronizado ✅
+2. [x] User not found → 401 (Credenciais inválidas), sem expor existência de user ✅
+3. [x] 5 login attempts em 15min → 429 rate limit ✅
+4. [x] 100 requests globais em 15min → 429 rate limit ✅
 
 ---
 

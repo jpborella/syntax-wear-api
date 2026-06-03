@@ -7,6 +7,7 @@ import categoriesRoutes from './routes/categories.routes';
 import ordersRoutes from './routes/orders.routes';
 import jwt from '@fastify/jwt';
 import authRoutes from './routes/auth.routes';
+import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
 import { errorHandler } from './middlewares/error.middleware';
 
@@ -20,6 +21,11 @@ if (!JWT_SECRET) {
 
 const fastify = Fastify({
     logger: true,
+});
+
+fastify.register(rateLimit, {
+    max: 100,
+    timeWindow: '15 minutes',
 });
 
 fastify.register(jwt, {
