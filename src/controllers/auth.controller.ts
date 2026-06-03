@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { loginUser, registerUser } from "../services/auth.service";
+import { loginUser, registerUser, sanitizeUser } from "../services/auth.service";
 import { AuthRequest, RegisterRequest } from "../types";
 import { loginSchema, registerSchema } from "../utils/validator";
 
@@ -7,12 +7,13 @@ export const register = async (request: FastifyRequest<{Body: RegisterRequest}>,
     const validation = registerSchema.parse(request.body as RegisterRequest);
 
     const user = await registerUser(validation);
+    const authUser = sanitizeUser(user);
 
     const token = request.server.jwt.sign({userId: user.id});
 
     reply.status(201).send({
-        user, 
-        token
+        ...authUser,
+        token,
     });
 };
 
@@ -20,11 +21,12 @@ export const login = async (request: FastifyRequest<{Body: AuthRequest}>, reply:
     const validation = loginSchema.parse(request.body as AuthRequest);
 
     const user = await loginUser(validation);
+    const authUser = sanitizeUser(user);
 
     const token = request.server.jwt.sign({userId: user.id});
 
     reply.status(200).send({
-        user,
-        token
+        ...authUser,
+        token,
     });
 };

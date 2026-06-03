@@ -40,3 +40,6 @@ coverage/
 
 # Prisma
 prisma/migrations/
+
+# Gemini
+GEMINI.md

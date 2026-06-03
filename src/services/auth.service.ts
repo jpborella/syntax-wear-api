@@ -1,3 +1,4 @@
+import type { User } from "@prisma/client";
 import { AuthRequest, RegisterRequest } from "../types";
 import { prisma } from "../utils/prisma";
 import bcrypt from "bcrypt";
@@ -6,6 +7,13 @@ const parseBrDate = (value: string) => {
     const [day, month, year] = value.split("/");
     return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
 };
+
+export const sanitizeUser = (user: User) => ({
+    id: user.id,
+    name: `${user.firstName} ${user.lastName}`.trim(),
+    email: user.email,
+    role: user.role,
+});
 
 export const registerUser = async (payload: RegisterRequest) => {
     const existingUser = await prisma.user.findFirst({

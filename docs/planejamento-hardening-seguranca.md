@@ -103,52 +103,61 @@ fastify.register(cors, {
 ---
 
 ### 2) Reativar e garantir auth + implementar RBAC/ownership
+**Status**: ✅ Completo
 **Depende de**: Etapa 1
 **Paralelo com**: Nenhum
 **Duração estimada**: 2-3 horas
 
 **Tarefas**:
-- Desbloquear `addHook("onRequest", authenticate)` em [src/routes/categories.routes.ts](src/routes/categories.routes.ts), [src/routes/products.routes.ts](src/routes/products.routes.ts), [src/routes/orders.routes.ts](src/routes/orders.routes.ts)
-- Corrigir `authenticate` middleware em [src/middlewares/auth.middleware.ts](src/middlewares/auth.middleware.ts): adicionar `return` ou `throw` após `sendUnauthorized()`
-- Em [src/services/order.services.ts](src/services/order.services.ts):
-  - `listOrders(filter, pagination)`: adicionar check `filter.userId === request.user.id || request.user.role === "ADMIN"`
-  - `getOrder(id)`: adicionar check de ownership
-  - `updateOrderStatus(id, status)`: adicionar check de ownership + admin only
-  - `cancelOrder(id)`: adicionar check de ownership
-  - `createOrder(...)`: derivar `userId` de `request.user.id`, nao do body
-- Mapear role check em [src/controllers/products.controller.ts](src/controllers/products.controller.ts) e [src/controllers/categories.controller.ts](src/controllers/categories.controller.ts) para POST/PUT/DELETE requerem `role === "ADMIN"`
+- [x] Aplicar autenticação em [src/routes/orders.routes.ts](src/routes/orders.routes.ts) com `addHook("onRequest", authenticate)`
+- [x] Aplicar autenticação seletiva em [src/routes/categories.routes.ts](src/routes/categories.routes.ts) e [src/routes/products.routes.ts](src/routes/products.routes.ts) apenas para `POST`/`PUT`/`DELETE`, preservando `GET` público conforme etapa 1
+- [x] Corrigir `authenticate` middleware em [src/middlewares/auth.middleware.ts](src/middlewares/auth.middleware.ts): retornar após respostas `401` e carregar `request.authUser`
+- [x] Criar augment de tipo em [src/types/fastify.d.ts](src/types/fastify.d.ts) e tipos `AuthenticatedUser`/`UserRole` em [src/types/index.ts](src/types/index.ts)
+- [x] Em [src/services/order.services.ts](src/services/order.services.ts):
+  - [x] `listOrders(filters, user)`: usuário comum fica limitado ao próprio `userId`; admin pode listar todos e filtrar por `userId`
+  - [x] `getOrderById(id, user)`: adiciona check de ownership
+  - [x] `updateOrderStatus(id, status, user)`: admin only
+  - [x] `deleteOrder(id, user)`: adiciona check de ownership antes de cancelar
+  - [x] `createOrder(payload, userId)`: deriva `userId` do token e ignora `userId` enviado no body
+- [x] Mapear role check em [src/controllers/products.controller.ts](src/controllers/products.controller.ts) e [src/controllers/categories.controller.ts](src/controllers/categories.controller.ts) para `POST`/`PUT`/`DELETE` requererem `role === "ADMIN"`
+- [x] Ajustar [src/middlewares/error.middleware.ts](src/middlewares/error.middleware.ts) para propagar `403` dos guards
 
 **Verificação**:
-1. GET /orders (anon) → 401
-2. POST /orders com bearer válido → sucesso, order vinculado ao user
-3. GET /orders/:id (outro user) → 403
-4. PUT /products/:id (non-admin) → 403
-5. DELETE /categories/:id (admin) → 204
+1. [x] GET /orders (anon) → 401 ✅
+2. [x] POST /orders com bearer válido → sucesso, order vinculado ao user ✅
+3. [x] GET /orders/:id (outro user) → 403 ✅
+4. [x] PUT /products/:id (non-admin) → 403 ✅
+5. [x] DELETE /categories/:id (admin) → 204 ✅
+6. [x] Build TypeScript sem erros: `npm run build` ✅
 
 ---
 
 ### 3) Sanitizar responses + configurar JWT
+**Status**: ✅ Completo
 **Depende de**: Etapa 1
 **Paralelo com**: Nenhum
 **Duração estimada**: 1-2 horas
 
 **Tarefas**:
-- Em [src/controllers/auth.controller.ts](src/controllers/auth.controller.ts):
-  - `register`: retornar DTO `{ id, name, email, role, token }`
-  - `login`: retornar DTO `{ id, name, email, role, token }`
-  - Nunca retornar `password` ou `password_hash`
-- Em [src/services/auth.service.ts](src/services/auth.service.ts):
-  - Criar helper para sanitizar usuário: `sanitizeUser(user: User): AuthResponse`
-  - Usar em `register()` e `login()`
-- Em [src/app.ts](src/app.ts):
-  - Configurar `@fastify/jwt` com `expiresIn: "1h"`, `issuer: "syntax-wear-api"`, `audience: "syntax-wear-client"`
-  - Validar token no servidor com mesmo `issuer`/`audience`
+- [x] Em [src/controllers/auth.controller.ts](src/controllers/auth.controller.ts):
+  - [x] `register`: retornar DTO `{ id, name, email, role, token }`
+  - [x] `login`: retornar DTO `{ id, name, email, role, token }`
+  - [x] Nunca retornar `password` ou `password_hash`
+- [x] Em [src/services/auth.service.ts](src/services/auth.service.ts):
+  - [x] Criar helper para sanitizar usuário: `sanitizeUser(user)`
+  - [x] Usar em `register()` e `login()`
+- [x] Em [src/app.ts](src/app.ts):
+  - [x] Configurar `@fastify/jwt` com `expiresIn: "1h"`, `iss: "syntax-wear-api"`, `aud: "syntax-wear-client"`
+  - [x] Validar token no servidor com `allowedIss: "syntax-wear-api"` e `allowedAud: "syntax-wear-client"`
+- [x] Em [src/routes/auth.routes.ts](src/routes/auth.routes.ts):
+  - [x] Documentar o schema de resposta sanitizado de `/auth/register` e `/auth/login`
 
 **Verificação**:
-1. POST /register → retorna `{ id, name, email, role, token }`, sem `password`
-2. POST /login → retorna `{ id, name, email, role, token }`, sem `password`
-3. Token decodificado contém `iss`, `aud`, `exp`
-4. Token expirado (>1h) gera 401
+1. [x] POST /register → retorna `{ id, name, email, role, token }`, sem `password` ✅
+2. [x] POST /login → retorna `{ id, name, email, role, token }`, sem `password` ✅
+3. [x] Token decodificado contém `iss`, `aud`, `exp` ✅
+4. [x] Token expirado (>1h) gera 401 ✅
+5. [x] Build TypeScript sem erros: `npm run build` ✅
 
 ---
 

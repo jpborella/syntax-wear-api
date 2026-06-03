@@ -23,7 +23,16 @@ const fastify = Fastify({
 });
 
 fastify.register(jwt, {
-    secret: process.env.JWT_SECRET!,
+    secret: JWT_SECRET,
+    sign: {
+        expiresIn: "1h",
+        iss: "syntax-wear-api",
+        aud: "syntax-wear-client",
+    },
+    verify: {
+        allowedIss: "syntax-wear-api",
+        allowedAud: "syntax-wear-client",
+    },
 });
 
 fastify.register(cors, {
