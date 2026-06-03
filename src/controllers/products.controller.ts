@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { CreateProduct, ProductFilters } from "../types";
 import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from "../services/product.services";
-import { createProductSchema, deleteProductSchema, productFiltersSchema, updateProductSchema } from "../utils/validator";
+import { createProductSchema, deleteProductSchema, productFiltersSchema, updateProductSchema, productIdSchema } from "../utils/validator";
 import slugify from "slugify";
 
 const ensureAdmin = (request: FastifyRequest, reply: FastifyReply) => {
@@ -27,7 +27,8 @@ export const listProducts = async (request: FastifyRequest<{ Querystring: Produc
 
 export const getProduct = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     const { id } = request.params;
-    const product = await getProductById(Number(id));
+    const params = productIdSchema.parse({ id });
+    const product = await getProductById(params.id);
     reply.status(200).send(product);
 };
 
@@ -55,6 +56,7 @@ export const updateExistingProduct = async (request: FastifyRequest<{ Params: { 
 	const { id } = request.params;
 	const body = request.body;
 
+    const params = productIdSchema.parse({ id });
 	const validate = updateProductSchema.parse(body);
 
 	if (validate.name) {
@@ -65,19 +67,18 @@ export const updateExistingProduct = async (request: FastifyRequest<{ Params: { 
 		});
 	}
 
-	const product = await updateProduct(Number(id), validate);
+	const product = await updateProduct(params.id, validate);
 	reply.status(200).send(product);
 };
 
-export const deleteExistingProduct = async (request: FastifyRequest<{ Params: { id: number } }>, reply: FastifyReply) => {
+export const deleteExistingProduct = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
 	if (!ensureAdmin(request, reply)) {
 		return;
 	}
 
 	const { id } = request.params;
+    const params = productIdSchema.parse({ id });
 
-	const validate = deleteProductSchema.parse({ id });
-
-	await deleteProduct(validate.id);
+	await deleteProduct(params.id);
 	reply.status(204).send();
 };

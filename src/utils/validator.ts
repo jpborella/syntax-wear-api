@@ -27,8 +27,8 @@ export const registerSchema = z.object({
 });
 
 export const productFiltersSchema = z.object({
-    page: z.coerce.number().int().positive("Página deve ser um número positivo.").optional(),
-    limit: z.coerce.number().int().positive("Limite deve ser um número positivo.").optional(),
+    page: z.coerce.number().int().positive("Página deve ser um número positivo.").optional().default(1),
+    limit: z.coerce.number().int().positive("Limite deve ser um número positivo.").max(50, "Limite máximo é 50.").optional().default(10),
     minPrice: z.coerce.number().positive("Preço mínimo deve ser um número positivo.").optional(),
     maxPrice: z.coerce.number().positive("Preço máximo deve ser um número positivo.").optional(),
     search: z.string().trim().optional(),
@@ -92,9 +92,13 @@ export const categoryIdSchema = z.object({
     id: z.coerce.number().int().positive("ID invalido."),
 });
 
+export const productIdSchema = z.object({
+    id: z.coerce.number().int().positive("ID invalido."),
+});
+
 export const orderFiltersSchema = z.object({
-    page: z.coerce.number().int().positive("Pagina deve ser um numero positivo.").optional(),
-    limit: z.coerce.number().int().positive("Limite deve ser um numero positivo.").optional(),
+    page: z.coerce.number().int().positive("Pagina deve ser um numero positivo.").optional().default(1),
+    limit: z.coerce.number().int().positive("Limite deve ser um numero positivo.").max(50, "Limite maximo e 50.").optional().default(10),
     status: z
         .enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"], {
             message: "Status invalido.",

@@ -190,27 +190,26 @@ fastify.register(cors, {
 ---
 
 ### 5) Validação + caps de paginação
+**Status**: ✅ Completo
 **Depende de**: Etapa 1
 **Paralelo com**: Etapa 4
 **Duração estimada**: 1-2 horas
 
 **Tarefas**:
-- Em [src/utils/validator.ts](src/utils/validator.ts):
-  - Atualizar `validatePagination()` para impor `limit <= 50` (ou seu máximo)
-  - Exemplo: `max: 50, default: 10`
-- Em [src/controllers/products.controller.ts](src/controllers/products.controller.ts):
-  - `listProducts`: validar `id` com zod antes de passar a service (nao confiar em `Number()`)
-- Em [src/controllers/categories.controller.ts](src/controllers/categories.controller.ts):
-  - `listCategories`: validar `id` com zod
-- Em [src/controllers/orders.controller.ts](src/controllers/orders.controller.ts):
-  - `listOrders`: validar `id` com zod
-- Em [src/services/product.services.ts](src/services/product.services.ts):
-  - `listProducts`: validar `limit` é <= 50, default 10
+- [x] Em [src/utils/validator.ts](src/utils/validator.ts):
+  - [x] Atualizar `productFiltersSchema` e `orderFiltersSchema` para impor `limit <= 50`
+  - [x] Adicionar `productIdSchema` para validação rigorosa
+- [x] Em [src/controllers/products.controller.ts](src/controllers/products.controller.ts):
+  - [x] Validar `id` com `productIdSchema` em `getProduct`, `update` e `delete`
+- [x] Em [src/controllers/categories.controller.ts](src/controllers/categories.controller.ts):
+  - [x] Validar `id` com `categoryIdSchema` (já existia, garantido uso)
+- [x] Em [src/controllers/orders.controller.ts](src/controllers/orders.controller.ts):
+  - [x] Validar `id` com `orderIdSchema` (já existia, garantido uso)
 
 **Verificação**:
-1. GET /products?limit=1000 → devolvido com `limit=50` ou erro 400
-2. GET /products/abc → 400 (ID inválido)
-3. GET /products/123 → 200 ou 404, nunca 500
+1. [x] GET /products?limit=1000 → 400 (Erro de validação) ✅
+2. [x] GET /products/abc → 400 (ID inválido) ✅
+3. [x] GET /products/123 → 200 ou 404, nunca 500 ✅
 
 ---
 
