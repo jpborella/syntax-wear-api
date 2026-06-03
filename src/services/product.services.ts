@@ -64,13 +64,23 @@ export const getProducts = async (filter: ProductFilters) => {
     }
 
     try {
-        // Buscar produtos com filtros
+        // Buscar produtos com filtros (payload reduzido para listagem)
         const [products, total] = await Promise.all([
             prisma.product.findMany({
                 where,
                 orderBy: Object.keys(orderBy).length > 0 ? orderBy : undefined,
                 skip,
                 take,
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    price: true,
+                    images: true,
+                    stock: true,
+                    categoryId: true,
+                    createdAt: true
+                }
             }),
             prisma.product.count({ where }),
         ]);

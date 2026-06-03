@@ -158,11 +158,7 @@ export const listOrders = async (filters: OrderFilters, user: AuthenticatedUser)
             skip,
             take,
             include: {
-                items: {
-                    include: {
-                        product: true,
-                    },
-                },
+                items: true,
             },
         }),
         prisma.order.count({ where }),

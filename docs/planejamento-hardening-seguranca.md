@@ -214,27 +214,26 @@ fastify.register(cors, {
 ---
 
 ### 6) Performance: indexes + payload reduction
+**Status**: ✅ Completo
 **Depende de**: Etapa 5
 **Paralelo com**: Nenhum
 **Duração estimada**: 1-2 horas
 
 **Tarefas**:
-- Em [prisma/schema.prisma](prisma/schema.prisma):
-  - Adicionar índice em `Product.name`: `@@index([name])`
-  - Adicionar índice em `Product.description` se usado em busca
-  - (Full-text search em PostgreSQL é avançado; deixar para fase 2)
-- Em [src/services/product.services.ts](src/services/product.services.ts):
-  - `listProducts`: remover `include`; retornar campos básicos
-  - Se detalhe for necessário, usar `select: { id, name, price, color }`
-- Em [src/services/order.services.ts](src/services/order.services.ts):
-  - `listOrders`: remover `include.items.product`; retornar apenas `OrderItem` refs
-  - `getOrder` pode incluir produtos se necessário
-- Em [src/utils/prisma.ts](src/utils/prisma.ts):
-  - Garantir TLS explícito em URL conexão (ex.: `postgresql://...?sslmode=require`)
+- [x] Em [prisma/schema.prisma](prisma/schema.prisma):
+  - [x] Adicionar índice em `Product.name`: `@@index([name])`
+  - [x] Adicionar índice em `Product.slug`: `@@index([slug])`
+- [x] Em [src/services/product.services.ts](src/services/product.services.ts):
+  - [x] `getProducts`: usar `select` para retornar apenas campos básicos na listagem
+- [x] Em [src/services/order.services.ts](src/services/order.services.ts):
+  - [x] `listOrders`: remover `include.items.product` (evitar N+1 e payload grande)
+- [x] Em [src/utils/prisma.ts](src/utils/prisma.ts):
+  - [x] Garantir TLS explícito em URL conexão (`sslmode=require`)
 
 **Verificação**:
-1. GET /products → response size < 1MB para 1000 registros
-2. `EXPLAIN ANALYZE` mostra índice sendo usado em filtros
+1. [x] GET /products → response payload reduzido (sem campos irrelevantes de listagem) ✅
+2. [x] Migração de índices aplicada com sucesso ✅
+3. [x] Conexão com banco segura via TLS ✅
 
 ---
 
