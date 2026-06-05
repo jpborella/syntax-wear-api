@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
 // Mock do Prisma - deve estar antes dos imports
-vi.mock('../../utils/prisma', () => ({
+vi.mock('../../src/utils/prisma', () => ({
     prisma: {
         user: {
             findFirst: vi.fn(),
@@ -15,9 +15,9 @@ vi.mock('../../utils/prisma', () => ({
 vi.mock('bcrypt');
 
 // Importar depois dos mocks
-import { registerUser, loginUser } from '../auth.service';
-import { ConflictError, NotFoundError, UnauthorizedError } from '../../types';
-import { prisma } from '../../utils/prisma';
+import { registerUser, loginUser } from '../../src/services/auth.service';
+import { ConflictError, NotFoundError, UnauthorizedError } from '../../src/types';
+import { prisma } from '../../src/utils/prisma';
 import * as bcrypt from 'bcrypt';
 
 describe('Auth Service', () => {

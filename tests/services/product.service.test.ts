@@ -5,11 +5,11 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
-} from '../product.services';
-import { NotFoundError } from '../../types';
+} from '../../src/services/product.services';
+import { NotFoundError } from '../../src/types';
 
 // Mock do Prisma
-vi.mock('../../utils/prisma', () => ({
+vi.mock('../../src/utils/prisma', () => ({
   prisma: {
     product: {
       findMany: vi.fn(),
@@ -25,7 +25,7 @@ vi.mock('../../utils/prisma', () => ({
   },
 }));
 
-import { prisma } from '../../utils/prisma';
+import { prisma } from '../../src/utils/prisma';
 
 describe('Product Service', () => {
   beforeEach(() => {
