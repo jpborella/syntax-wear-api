@@ -11,11 +11,9 @@ import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
 import { errorHandler } from './middlewares/error.middleware';
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
+const JWT_SECRET: string = process.env.JWT_SECRET || (() => {
     throw new Error('JWT_SECRET não definida no ambiente');
-}
+})();
 
 export async function buildApp() {
     const fastify = Fastify({
@@ -28,7 +26,7 @@ export async function buildApp() {
     });
 
     fastify.register(jwt, {
-        secret: JWT_SECRET,
+        secret: JWT_SECRET as string,
         sign: {
             expiresIn: "1h",
             iss: "syntax-wear-api",
