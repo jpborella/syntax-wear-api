@@ -24,6 +24,10 @@ export default async function productRoutes(fastify: FastifyInstance) {
                                         name: { type: "string" },
                                         description: { type: "string" },
                                         price: { type: "number" },
+                                        images: {
+                                            type: "array",
+                                            items: { type: "string" },
+                                        },
                                         colors: {
                                             type: "array",
                                             items: { type: "string" },

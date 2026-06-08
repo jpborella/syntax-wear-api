@@ -77,6 +77,7 @@ export const getProducts = async (filter: ProductFilters) => {
                     slug: true,
                     price: true,
                     images: true,
+                    colors: true,
                     stock: true,
                     categoryId: true,
                     createdAt: true
