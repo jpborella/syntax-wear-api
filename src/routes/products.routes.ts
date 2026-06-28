@@ -75,6 +75,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         minPrice: { type: "number" },
                         maxPrice: { type: "number" },
                         search: { type: "string" },
+                        categoryId: { type: "number" },
                         sortBy: { type: "string", enum: ["price", "name", "createdAt"] },
                         sortOrder: { type: "string", enum: ["asc", "desc"] },
                     },

@@ -29,10 +29,11 @@ const ensureAdmin = (request: FastifyRequest, reply: FastifyReply) => {
 };
 
 export const listCategories = async (
-    _request: FastifyRequest,
+    request: FastifyRequest<{ Querystring: { search?: string } }>,
     reply: FastifyReply
 ) => {
-    const categories = await listCategoriesService();
+    const { search } = request.query;
+    const categories = await listCategoriesService({ search });
     reply.status(200).send(categories);
 };
 

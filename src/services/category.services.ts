@@ -1,9 +1,28 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../utils/prisma";
 
-export const listCategories = async () => {
+export const listCategories = async ({ search }: { search?: string } = {}) => {
+    const where: any = { active: true };
+
+    if (search && search.trim()) {
+        where.OR = [
+            {
+                name: {
+                    contains: search,
+                    mode: "insensitive",
+                },
+            },
+            {
+                slug: {
+                    contains: search,
+                    mode: "insensitive",
+                },
+            },
+        ];
+    }
+
     return prisma.category.findMany({
-        where: { active: true },
+        where,
         orderBy: { name: "asc" },
     });
 };

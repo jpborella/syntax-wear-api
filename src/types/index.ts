@@ -9,6 +9,7 @@ export interface ProductFilters {
     minPrice?: number;
     maxPrice?: number;
     search?: string;
+    categoryId?: number;
     sortBy?: 'price' | 'name' | 'createdAt';
     sortOrder?: 'asc' | 'desc';
 }

@@ -71,7 +71,7 @@ export async function buildApp() {
     });
 
     fastify.register(productsRoutes, { prefix: '/products' });
-    fastify.register(categoriesRoutes, { prefix: '/admin/categories' });
+    fastify.register(categoriesRoutes, { prefix: '/categories' });
     fastify.register(ordersRoutes, { prefix: '/orders' });
     fastify.register(authRoutes, { prefix: '/auth' });
 

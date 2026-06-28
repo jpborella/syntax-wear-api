@@ -32,6 +32,7 @@ export const productFiltersSchema = z.object({
     minPrice: z.coerce.number().positive("Preço mínimo deve ser um número positivo.").optional(),
     maxPrice: z.coerce.number().positive("Preço máximo deve ser um número positivo.").optional(),
     search: z.string().trim().optional(),
+    categoryId: z.coerce.number().int().positive("A categoria é obrigatória.").optional(),
     sortBy: z.enum(['price', 'name', 'createdAt'], { message: "Ordenar por deve ser: price, name ou createdAt." }).optional(),
     sortOrder: z.enum(['asc', 'desc'], { message: "Ordem de classificação deve ser: asc ou desc." }).optional(),
 });
