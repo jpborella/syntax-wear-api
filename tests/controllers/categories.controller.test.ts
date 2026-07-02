@@ -28,6 +28,7 @@ describe('Categories Controller', () => {
         mockRequest = {
             body: {},
             params: {},
+            query: {},
             authUser: {
                 id: 1,
                 role: 'ADMIN',

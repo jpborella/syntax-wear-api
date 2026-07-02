@@ -3,13 +3,13 @@ import { loginUser, registerUser, sanitizeUser } from "../services/auth.service"
 import { AuthRequest, RegisterRequest } from "../types";
 import { loginSchema, registerSchema } from "../utils/validator";
 
-export const register = async (request: FastifyRequest<{Body: RegisterRequest}>, reply: FastifyReply) => {
+export const register = async (request: FastifyRequest<{ Body: RegisterRequest }>, reply: FastifyReply) => {
     const validation = registerSchema.parse(request.body as RegisterRequest);
 
     const user = await registerUser(validation);
     const authUser = sanitizeUser(user);
 
-    const token = request.server.jwt.sign({userId: user.id});
+    const token = request.server.jwt.sign({ userId: user.id });
 
     reply.status(201).send({
         ...authUser,
@@ -17,16 +17,18 @@ export const register = async (request: FastifyRequest<{Body: RegisterRequest}>,
     });
 };
 
-export const login = async (request: FastifyRequest<{Body: AuthRequest}>, reply: FastifyReply) => {
+export const login = async (request: FastifyRequest<{ Body: AuthRequest }>, reply: FastifyReply) => {
     const validation = loginSchema.parse(request.body as AuthRequest);
 
     const user = await loginUser(validation);
     const authUser = sanitizeUser(user);
 
-    const token = request.server.jwt.sign({userId: user.id});
+    const token = request.server.jwt.sign({ userId: user.id });
 
     reply.status(200).send({
         ...authUser,
         token,
     });
 };
+
+export const profile = async (request: FastifyRequest, reply: FastifyReply) => reply.send(request.user)
