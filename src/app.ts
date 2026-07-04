@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.routes';
 import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
 import { errorHandler } from './middlewares/error.middleware';
+import fastifyCookie from '@fastify/cookie';
 
 const JWT_SECRET: string = process.env.JWT_SECRET || (() => {
     throw new Error('JWT_SECRET não definida no ambiente');
@@ -25,8 +26,14 @@ export async function buildApp() {
         timeWindow: '15 minutes',
     });
 
+    fastify.register(fastifyCookie);
+
     fastify.register(jwt, {
-        secret: JWT_SECRET as string,
+        secret: process.env.JWT_SECRET!,
+        cookie: {
+            cookieName: 'syntaxwear.token',
+            signed: false, // Define se o cookie deve ser assinado (opcional) - nao estamos usando assinatura de cookie, apenas JWT
+        },
         sign: {
             expiresIn: "1h",
             iss: "syntax-wear-api",

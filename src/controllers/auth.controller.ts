@@ -25,9 +25,16 @@ export const login = async (request: FastifyRequest<{ Body: AuthRequest }>, repl
 
     const token = request.server.jwt.sign({ userId: user.id });
 
+    reply.setCookie('syntaxwear.token', token, {
+        httpOnly: true, // Impede o acesso ao cookie via JavaScript
+        secure: process.env.NODE_ENV === 'production', // Garante que o cookie seja enviado apenas em conexões HTTPS em produção
+        sameSite: 'lax', // Protege contra CSRF - permite envio em requisições de navegação normal
+        path: '/', // Define o caminho para o qual o cookie é válido (todo o site)
+        maxAge: 60 * 60 * 24, // Define a duração do cookie em segundos (1 dia)
+    });
+
     reply.status(200).send({
-        ...authUser,
-        token,
+        ...authUser
     });
 };
 
