@@ -2,6 +2,7 @@ import { AuthRequest, RegisterRequest, ConflictError, NotFoundError, Unauthorize
 import { prisma } from "../utils/prisma";
 import bcrypt from "bcrypt";
 import { sanitizeUser } from "../utils/auth.utils";
+import { FastifyReply } from "fastify";
 
 const parseBrDate = (value: string) => {
     const [day, month, year] = value.split("/");
@@ -44,19 +45,24 @@ export const registerUser = async (payload: RegisterRequest) => {
     return newUser;
 };
 
-export const loginUser = async (data: AuthRequest) => {
+export const loginUser = async (data: AuthRequest, reply: FastifyReply) => {
     const user = await prisma.user.findUnique({
         where: { email: data.email },
     });
 
     if (!user) {
-        throw new NotFoundError("Usuário não encontrado.");
+        reply.status(409).send({ message: "As credenciais estão incorretas." });
+        return;
     }
 
     const isValidPassword = await bcrypt.compare(data.password, user.password);
     if (!isValidPassword) {
-        throw new UnauthorizedError("Senha incorreta.");
+        reply.status(401).send({ message: "As credenciais estão incorretas." });
+        return;
     }
 
-    return user;
+    // Remover password do objeto user antes de retorná-lo
+    const { password, ...userWithoutPassword } = user;
+
+    return userWithoutPassword;
 };

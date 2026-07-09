@@ -18,12 +18,14 @@ export const register = async (request: FastifyRequest<{ Body: RegisterRequest }
 };
 
 export const login = async (request: FastifyRequest<{ Body: AuthRequest }>, reply: FastifyReply) => {
+
     const validation = loginSchema.parse(request.body as AuthRequest);
 
-    const user = await loginUser(validation);
-    const authUser = sanitizeUser(user);
+    const user = await loginUser(validation, reply);
 
-    const token = request.server.jwt.sign({ userId: user.id });
+    if (!user) return; // Se o usuário não for encontrado, a resposta já foi enviada no serviço
+
+    const token = request.server.jwt.sign({ userId: user?.id });
 
     reply.setCookie('syntaxwear.token', token, {
         httpOnly: true, // Impede o acesso ao cookie via JavaScript
@@ -34,7 +36,7 @@ export const login = async (request: FastifyRequest<{ Body: AuthRequest }>, repl
     });
 
     reply.status(200).send({
-        ...authUser
+        user,
     });
 };
 
