@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { login, profile, register } from "../controllers/auth.controller";
+import { googleLogin, login, profile, register } from "../controllers/auth.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 
 export default async function authRoutes(fastify: FastifyInstance) {
@@ -87,7 +87,29 @@ export default async function authRoutes(fastify: FastifyInstance) {
 			security: [{ bearerAuth: [] }], // Indica que a rota requer autenticação
 		},
 	}, profile);
+
+	fastify.post(
+		"/google-login",
+		{
+			schema: {
+				tags: ["Auth"],
+				description: "Realiza login do usuario com Google e retorna um token JWT.",
+				body: {
+					type: "object",
+					properties: {
+						credential: { type: "string", description: "Credencial do Google." },
+					},
+				},
+				response: {
+					200: authResponseSchema,
+				},
+			},
+		},
+		googleLogin
+	);
 }
+
+
 
 
 
