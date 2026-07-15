@@ -89,27 +89,20 @@ export default async function authRoutes(fastify: FastifyInstance) {
 	}, profile);
 
 	fastify.post(
-		"/google-login",
+		"/google",
 		{
 			schema: {
 				tags: ["Auth"],
 				description: "Realiza login do usuario com Google e retorna um token JWT.",
 				body: {
 					type: "object",
+					required: ["credential"],
 					properties: {
 						credential: { type: "string", description: "Credencial do Google." },
 					},
-				},
-				response: {
-					200: authResponseSchema,
 				},
 			},
 		},
 		googleLogin
 	);
 }
-
-
-
-
-

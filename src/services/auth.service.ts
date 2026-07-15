@@ -70,10 +70,7 @@ export const loginUser = async (data: AuthRequest, reply: FastifyReply) => {
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-export const loginWithGoogle = async (
-    credential: string,
-    reply: FastifyReply
-) => {
+export const loginWithGoogle = async (credential: string, reply: FastifyReply) => {
     const ticket = await googleClient.verifyIdToken({
         idToken: credential,
         audience: process.env.GOOGLE_CLIENT_ID,
