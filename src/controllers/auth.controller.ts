@@ -67,3 +67,14 @@ export const googleLogin = async (request: FastifyRequest<{ Body: { credential: 
         user,
     });
 };
+
+export const signOut = async (request: FastifyRequest, reply: FastifyReply) => {
+    reply.clearCookie('syntaxwear.token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+    });
+
+    reply.status(200).send({ message: "Logout realizado com sucesso." });
+    };

@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { googleLogin, login, profile, register } from "../controllers/auth.controller";
+import { googleLogin, login, profile, register, signOut } from "../controllers/auth.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 
 export default async function authRoutes(fastify: FastifyInstance) {
@@ -104,5 +104,18 @@ export default async function authRoutes(fastify: FastifyInstance) {
 			},
 		},
 		googleLogin
+	);
+
+	fastify.post<any>(
+		"/signout",
+		{
+			preHandler: [authenticate], // Protege a rota com o middleware de autenticação
+			schema: {
+				tags: ["Auth"],
+				description: "Faz logout do usuário autenticado e invalida o token JWT.",
+				security: [{ bearerAuth: [] }], // Indica que a rota requer autenticação
+			},
+		},
+		signOut
 	);
 }
