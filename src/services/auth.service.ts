@@ -12,7 +12,7 @@ const parseBrDate = (value: string) => {
 
 export { sanitizeUser };
 
-export const registerUser = async (payload: RegisterRequest) => {
+export const registerUser = async (payload: RegisterRequest, reply: FastifyReply) => {
     const existingUser = await prisma.user.findFirst({
         where: payload.cpf
             ? {
@@ -25,7 +25,12 @@ export const registerUser = async (payload: RegisterRequest) => {
     });
 
     if (existingUser) {
-        throw new ConflictError(existingUser.email === payload.email ? "Email já cadastrado." : "CPF já cadastrado.");
+        if (existingUser.email === payload.email) {
+            return reply.status(409).send({ message: "Email já cadastrado." });
+        }
+        if (existingUser.cpf === payload.cpf) {
+            return reply.status(409).send({ message: "CPF já cadastrado." });
+        }
     }
 
     const hashedPassword = await bcrypt.hash(payload.password, 10);

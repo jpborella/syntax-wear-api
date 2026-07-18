@@ -3,17 +3,24 @@ import { loginUser, loginWithGoogle, registerUser, sanitizeUser } from "../servi
 import { AuthRequest, RegisterRequest } from "../types";
 import { loginSchema, registerSchema } from "../utils/validator";
 
-export const register = async (request: FastifyRequest<{ Body: RegisterRequest }>, reply: FastifyReply) => {
+export const register = async (request: FastifyRequest, reply: FastifyReply) => {
+
     const validation = registerSchema.parse(request.body as RegisterRequest);
-
-    const user = await registerUser(validation);
+    const user = await registerUser(validation, reply);
+    if (!user) return;
     const authUser = sanitizeUser(user);
-
     const token = request.server.jwt.sign({ userId: user.id });
 
+    reply.setCookie('syntaxwear.token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24,
+    });
+
     reply.status(201).send({
-        ...authUser,
-        token,
+        authUser,
     });
 };
 
@@ -77,4 +84,4 @@ export const signOut = async (request: FastifyRequest, reply: FastifyReply) => {
     });
 
     reply.status(200).send({ message: "Logout realizado com sucesso." });
-    };
+};
