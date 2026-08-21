@@ -10,6 +10,8 @@ export interface ProductFilters {
     maxPrice?: number;
     search?: string;
     categoryId?: number;
+    gender?: 'MASCULINO' | 'FEMININO' | 'UNISSEX';
+    isOutlet?: boolean;
     sortBy?: 'price' | 'name' | 'createdAt';
     sortOrder?: 'asc' | 'desc';
 }

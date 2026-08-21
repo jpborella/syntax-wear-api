@@ -29,6 +29,12 @@ enum Role {
     ADMIN
 }
 
+enum Gender {
+    MASCULINO
+    FEMININO
+    UNISSEX
+}
+
 model Category {
     id        Int       @id @default(autoincrement())
     name      String
@@ -52,7 +58,9 @@ model Product {
     images      Json?
     sizes       Json?
     colors      String[] @default([])
+    gender      Gender   @default(UNISSEX)
     stock       Int      @default(0)
+    isOutlet    Boolean  @default(false)
     active      Boolean  @default(true)
     categoryId  Int
     category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)

@@ -35,6 +35,8 @@ export const productFiltersSchema = z.object({
     categoryId: z.coerce.number().int().positive("A categoria é obrigatória.").optional(),
     sortBy: z.enum(['price', 'name', 'createdAt'], { message: "Ordenar por deve ser: price, name ou createdAt." }).optional(),
     sortOrder: z.enum(['asc', 'desc'], { message: "Ordem de classificação deve ser: asc ou desc." }).optional(),
+    gender: z.enum(['MASCULINO', 'FEMININO', 'UNISSEX']).optional(),
+    isOutlet: z.coerce.boolean().optional(),
 });
 
 export const createProductSchema = z.object({

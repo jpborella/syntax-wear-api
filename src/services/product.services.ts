@@ -20,13 +20,25 @@ export const getProducts = async (filter: ProductFilters) => {
         sortBy,
         sortOrder,
         page = 1,
-        limit = 10
-    } = filter;
+        limit = 10,
+        gender,
+        isOutlet
+    } = filter as any;
 
     const where: any = { active: true };
 
     if (categoryId !== undefined) {
         where.categoryId = Number(categoryId);
+    }
+
+    // Filtro por gênero (se informado)
+    if (gender) {
+        where.gender = gender;
+    }
+
+    // Filtro por outlet
+    if (isOutlet !== undefined) {
+        where.isOutlet = Boolean(isOutlet);
     }
 
     // Filtro por preço
