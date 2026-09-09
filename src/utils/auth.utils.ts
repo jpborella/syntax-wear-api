@@ -4,7 +4,7 @@ import { UserResponse, AuthenticatedUser, ForbiddenError } from "../types";
 /**
  * Sanitiza um objeto de usuário removendo campos sensíveis.
  */
-export const sanitizeUser = (user: User): UserResponse => ({
+export const sanitizeUser = (user: Omit<User, "password">): UserResponse => ({
     id: user.id,
     name: `${user.firstName} ${user.lastName}`.trim(),
     email: user.email,

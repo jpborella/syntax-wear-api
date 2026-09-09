@@ -38,6 +38,7 @@ describe('Auth Controller', () => {
         };
         mockReply = {
             status: vi.fn().mockReturnThis(),
+            setCookie: vi.fn().mockReturnThis(),
             send: vi.fn().mockReturnThis(),
         };
         vi.clearAllMocks();

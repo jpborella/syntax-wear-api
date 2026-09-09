@@ -2,7 +2,6 @@ import { AuthRequest, RegisterRequest, ConflictError, NotFoundError, Unauthorize
 import { prisma } from "../utils/prisma";
 import bcrypt from "bcrypt";
 import { sanitizeUser } from "../utils/auth.utils";
-import { FastifyReply } from "fastify";
 import { OAuth2Client } from "google-auth-library";
 
 const parseBrDate = (value: string) => {
@@ -12,7 +11,7 @@ const parseBrDate = (value: string) => {
 
 export { sanitizeUser };
 
-export const registerUser = async (payload: RegisterRequest, reply: FastifyReply) => {
+export const registerUser = async (payload: RegisterRequest) => {
     const existingUser = await prisma.user.findFirst({
         where: payload.cpf
             ? {
@@ -26,10 +25,10 @@ export const registerUser = async (payload: RegisterRequest, reply: FastifyReply
 
     if (existingUser) {
         if (existingUser.email === payload.email) {
-            return reply.status(409).send({ message: "Email já cadastrado." });
+            throw new ConflictError("Email já cadastrado.");
         }
         if (existingUser.cpf === payload.cpf) {
-            return reply.status(409).send({ message: "CPF já cadastrado." });
+            throw new ConflictError("CPF já cadastrado.");
         }
     }
 
@@ -51,20 +50,18 @@ export const registerUser = async (payload: RegisterRequest, reply: FastifyReply
     return newUser;
 };
 
-export const loginUser = async (data: AuthRequest, reply: FastifyReply) => {
+export const loginUser = async (data: AuthRequest) => {
     const user = await prisma.user.findUnique({
         where: { email: data.email },
     });
 
     if (!user) {
-        reply.status(409).send({ message: "As credenciais estão incorretas." });
-        return;
+        throw new NotFoundError("Usuário não encontrado.");
     }
 
     const isValidPassword = await bcrypt.compare(data.password, user.password);
     if (!isValidPassword) {
-        reply.status(401).send({ message: "As credenciais estão incorretas." });
-        return;
+        throw new UnauthorizedError("Senha incorreta.");
     }
 
     // Remover password do objeto user antes de retorná-lo
@@ -75,7 +72,7 @@ export const loginUser = async (data: AuthRequest, reply: FastifyReply) => {
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-export const loginWithGoogle = async (credential: string, reply: FastifyReply) => {
+export const loginWithGoogle = async (credential: string) => {
     const ticket = await googleClient.verifyIdToken({
         idToken: credential,
         audience: process.env.GOOGLE_CLIENT_ID,
@@ -84,8 +81,7 @@ export const loginWithGoogle = async (credential: string, reply: FastifyReply) =
     const payload = ticket.getPayload();
 
     if (!payload || !payload.email) {
-        reply.status(401).send({ message: "Não autorizado." });
-        return;
+        throw new UnauthorizedError("Não autorizado.");
     }
 
     const { email, given_name, family_name } = payload;

@@ -6,7 +6,7 @@ import { loginSchema, registerSchema } from "../utils/validator";
 export const register = async (request: FastifyRequest, reply: FastifyReply) => {
 
     const validation = registerSchema.parse(request.body as RegisterRequest);
-    const user = await registerUser(validation, reply);
+    const user = await registerUser(validation);
     if (!user) return;
     const authUser = sanitizeUser(user);
     const token = request.server.jwt.sign({ userId: user.id });
@@ -19,15 +19,13 @@ export const register = async (request: FastifyRequest, reply: FastifyReply) => 
         maxAge: 60 * 60 * 24,
     });
 
-    reply.status(201).send({
-        authUser,
-    });
+    reply.status(201).send({ ...authUser, token });
 };
 
 export const login = async (request: FastifyRequest<{ Body: AuthRequest }>, reply: FastifyReply) => {
     const validation = loginSchema.parse(request.body as AuthRequest);
 
-    const user = await loginUser(validation, reply);
+    const user = await loginUser(validation);
 
     if (!user) return;
 
@@ -41,9 +39,7 @@ export const login = async (request: FastifyRequest<{ Body: AuthRequest }>, repl
         maxAge: 60 * 60 * 24,
     });
 
-    reply.status(200).send({
-        user,
-    });
+    reply.status(200).send({ ...sanitizeUser(user), token });
 };
 
 export const profile = async (request: FastifyRequest, reply: FastifyReply) => reply.send(request.user);
@@ -57,7 +53,7 @@ export const googleLogin = async (request: FastifyRequest<{ Body: { credential: 
         return;
     }
 
-    const user = await loginWithGoogle(request.body.credential, reply);
+    const user = await loginWithGoogle(request.body.credential);
     if (!user) return;
 
     const token = request.server.jwt.sign({ userId: user.id });
