@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { googleLogin, login, profile, register, signOut } from "../controllers/auth.controller";
+import { googleLogin, login, profile, register, signOut, updateProfile } from "../controllers/auth.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 
 export default async function authRoutes(fastify: FastifyInstance) {
@@ -9,6 +9,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
 			id: { type: "number" },
 			name: { type: "string" },
 			email: { type: "string" },
+			phone: { type: "string", nullable: true },
 			role: { type: "string", enum: ["USER", "ADMIN"] },
 			token: { type: "string" },
 		},
@@ -87,6 +88,22 @@ export default async function authRoutes(fastify: FastifyInstance) {
 			security: [{ bearerAuth: [] }], // Indica que a rota requer autenticação
 		},
 	}, profile);
+
+	fastify.patch("/profile", {
+		preHandler: [authenticate],
+		schema: {
+			tags: ["Auth"],
+			description: "Atualiza o telefone do usuário autenticado",
+			security: [{ bearerAuth: [] }],
+			body: {
+				type: "object",
+				required: ["phone"],
+				properties: {
+					phone: { type: "string", description: "Telefone com DDD, somente números." },
+				},
+			},
+		},
+	}, updateProfile);
 
 	fastify.post(
 		"/google",

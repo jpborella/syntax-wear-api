@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { loginUser, loginWithGoogle, registerUser, sanitizeUser } from "../services/auth.service";
 import { AuthRequest, RegisterRequest } from "../types";
-import { loginSchema, registerSchema } from "../utils/validator";
+import { loginSchema, registerSchema, updateProfileSchema } from "../utils/validator";
+import { prisma } from "../utils/prisma";
 
 export const register = async (request: FastifyRequest, reply: FastifyReply) => {
 
@@ -43,6 +44,21 @@ export const login = async (request: FastifyRequest<{ Body: AuthRequest }>, repl
 };
 
 export const profile = async (request: FastifyRequest, reply: FastifyReply) => reply.send(request.user);
+
+export const updateProfile = async (request: FastifyRequest, reply: FastifyReply) => {
+    if (!request.authUser) {
+        reply.status(401).send({ error: "Usuário não autenticado." });
+        return;
+    }
+
+    const { phone } = updateProfileSchema.parse(request.body);
+    const user = await prisma.user.update({
+        where: { id: request.authUser.id },
+        data: { phone },
+    });
+
+    reply.send(sanitizeUser(user));
+};
 
 export const googleLogin = async (request: FastifyRequest<{ Body: { credential: string } }>, reply: FastifyReply) => {
     // Lógica de login com Google OAuth2.0

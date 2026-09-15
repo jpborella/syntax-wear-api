@@ -5,6 +5,13 @@ export const loginSchema = z.object({
     password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres.")
 });
 
+export const updateProfileSchema = z.object({
+    phone: z
+        .string()
+        .trim()
+        .regex(/^\d{10,11}$/, "Telefone deve conter DDD e número (10 ou 11 dígitos)."),
+});
+
 export const registerSchema = z.object({
     firstName: z.string().trim().min(2, "O nome é obrigatório."),
     lastName: z.string().trim().min(2, "O sobrenome é obrigatório."),
