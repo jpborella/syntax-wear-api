@@ -98,6 +98,11 @@ export interface CreateOrder {
     items: OrderItemInput[];
 }
 
+export interface CartItemInput {
+    productId: number;
+    quantity: number;
+}
+
 export interface UpdateOrder {
     status: OrderStatus;
 }

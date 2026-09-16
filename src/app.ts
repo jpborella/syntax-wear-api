@@ -7,6 +7,7 @@ import categoriesRoutes from './routes/categories.routes';
 import ordersRoutes from './routes/orders.routes';
 import jwt from '@fastify/jwt';
 import authRoutes from './routes/auth.routes';
+import cartRoutes from './routes/cart.routes';
 import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
 import { errorHandler } from './middlewares/error.middleware';
@@ -81,6 +82,7 @@ export async function buildApp() {
     fastify.register(categoriesRoutes, { prefix: '/categories' });
     fastify.register(ordersRoutes, { prefix: '/orders' });
     fastify.register(authRoutes, { prefix: '/auth' });
+    fastify.register(cartRoutes, { prefix: '/cart' });
 
     fastify.get('/', async () => {
         return {

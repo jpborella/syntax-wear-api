@@ -126,6 +126,11 @@ export const orderItemSchema = z.object({
     quantity: z.coerce.number().int().positive("Quantidade deve ser maior que zero."),
 });
 
+export const cartItemSchema = z.object({
+    productId: z.coerce.number().int().positive("Produto invalido."),
+    quantity: z.coerce.number().int().positive("Quantidade deve ser maior que zero."),
+});
+
 export const shippingAddressSchema = z.object({
     cep: z.string().trim().min(8, "CEP invalido."),
     street: z.string().trim().min(2, "Rua e obrigatoria."),
@@ -150,4 +155,8 @@ export const updateOrderSchema = z.object({
     status: z.enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"], {
         message: "Status invalido.",
     }),
+});
+
+export const updateCartSchema = z.object({
+    items: z.array(cartItemSchema),
 });
