@@ -6,13 +6,12 @@ Documento para registrar a decisão e a ordem de implementação do Stripe como 
 
 A integração do Stripe deve ser feita depois das melhorias essenciais de autenticação e ambiente, mas antes das melhorias de organização, tipagem e acabamento visual.
 
-O CORS, a validação das variáveis de ambiente e os cookies de autenticação já foram corrigidos. Antes de iniciar o Stripe, a ordem recomendada é:
+O CORS, a validação das variáveis de ambiente, os cookies de autenticação e o Google Login já foram corrigidos. Antes de iniciar o Stripe, a ordem recomendada é:
 
-1. Corrigir e validar o Google Login.
-2. Revisar a transação de estoque para o checkout.
-3. Integrar o Stripe.
-4. Testar o checkout, a confirmação do pagamento e o webhook.
-5. Continuar com Swagger, testes adicionais, README e organização do projeto.
+1. Revisar a transação de estoque para o checkout.
+2. Integrar o Stripe.
+3. Testar o checkout, a confirmação do pagamento e o webhook.
+4. Continuar com Swagger, testes adicionais, README e organização do projeto.
 
 ## Por que aguardar essas etapas
 
@@ -63,6 +62,6 @@ O fluxo esperado é:
 - CORS: concluído.
 - Variáveis de ambiente: concluído.
 - Cookies de autenticação: concluído.
-- Google Login: pendente.
+- Google Login: concluído no código; configuração do domínio de produção pendente.
 - Transação de estoque: pendente.
 - Integração Stripe: planejada para depois dessas etapas.

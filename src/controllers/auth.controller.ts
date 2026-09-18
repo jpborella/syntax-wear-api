@@ -58,7 +58,7 @@ export const googleLogin = async (request: FastifyRequest<{ Body: { credential: 
         return;
     }
 
-    const user = await loginWithGoogle(request.body.credential);
+    const user = await loginWithGoogle(credential);
     if (!user) return;
 
     const token = request.server.jwt.sign({ userId: user.id });

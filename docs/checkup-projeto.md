@@ -100,7 +100,9 @@ As variáveis obrigatórias agora são validadas antes do uso. Se alguma estiver
 
 ---
 
-### 4. [NECESSÁRIO] Corrigir e documentar o Google Login
+### 4. [CONCLUÍDO] Corrigir e documentar o Google Login
+
+**Status:** concluído. O frontend e o backend usam o mesmo Client ID validado; o fluxo removeu logs de credenciais e ganhou testes para credencial ausente e login bem-sucedido.
 
 **Arquivos:**
 
@@ -118,6 +120,8 @@ https://syntax-wear-shop-online.vercel.app
 em **Authorized JavaScript origins**.
 
 O erro `Missing required parameter: client_id` indica que o frontend publicado não recebeu `VITE_GOOGLE_CLIENT_ID` durante o build.
+
+Para produção, ainda é necessário configurar no Google Cloud o domínio `https://syntax-wear-shop-online.vercel.app` em **Authorized JavaScript origins** e definir o mesmo Client ID nas variáveis `VITE_GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_ID`.
 
 **Por que importa:** login funcionando é uma das primeiras coisas que um recrutador pode testar.
 
@@ -427,7 +431,7 @@ Depois das correções funcionais:
 1. CORS em produção (concluído).
 2. Variáveis de ambiente (concluído).
 3. Cookies de autenticação (concluído).
-4. Google Login.
+4. Google Login (concluído).
 5. Remoção de logs de debug.
 6. Tratamento de erros.
 7. Transação de estoque, se o checkout for demonstrado.
@@ -444,7 +448,7 @@ Depois das correções funcionais:
 
 ### Necessários Antes De Mostrar O Site
 
-Itens 4 e 12. Sem eles, a aplicação pode falhar em produção ou expor dados no console.
+Item 12. Sem ele, a aplicação pode expor dados no console.
 
 O item 10 também é necessário se o recrutador puder criar pedidos ou testar o estoque com requisições simultâneas. Para uma demonstração apenas visual, ele pode ser tratado depois.
 
@@ -474,4 +478,4 @@ Itens 16, 17 e 19. São melhorias de organização e acabamento. Devem ser feita
 
 ## Próximo Passo Sugerido
 
-Continuar pelo item 4: corrigir e validar o Google Login. Depois, revisar o fluxo de estoque antes de iniciar a integração do Stripe.
+Continuar pelo item 10: revisar a transação de estoque antes de iniciar a integração do Stripe.

@@ -3,6 +3,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import {
     register,
     login,
+    googleLogin,
 } from '../../src/controllers/auth.controller';
 import * as authService from '../../src/services/auth.service';
 import { ConflictError, UnauthorizedError, NotFoundError } from '../../src/types';
@@ -21,6 +22,7 @@ vi.mock('../../src/services/auth.service', async () => {
         }),
         registerUser: vi.fn(),
         loginUser: vi.fn(),
+        loginWithGoogle: vi.fn(),
     };
 });
 
@@ -36,6 +38,7 @@ describe('Auth Controller', () => {
                 jwt: {
                     sign: vi.fn(() => 'jwt_token_here'),
                 },
+                loginWithGoogle: vi.fn(),
             },
         };
         mockReply = {
@@ -67,19 +70,13 @@ describe('Auth Controller', () => {
         expect(mockReply.setCookie).toHaveBeenCalledWith(
             AUTH_COOKIE_NAME,
             'jwt_token_here',
-            expect.objectContaining({
-                secure: false,
-                sameSite: 'lax',
-            }),
+            expect.objectContaining({ secure: false, sameSite: 'lax' }),
         );
     });
 
     it('configura o cookie de autenticação para produção', async () => {
         process.env.NODE_ENV = 'production';
-        mockRequest.body = {
-            email: 'joao@test.com',
-            password: 'senha123',
-        };
+        mockRequest.body = { email: 'joao@test.com', password: 'senha123' };
         vi.mocked(authService.loginUser).mockResolvedValue({
             id: 1,
             firstName: 'João',
@@ -94,11 +91,46 @@ describe('Auth Controller', () => {
         expect(mockReply.setCookie).toHaveBeenCalledWith(
             AUTH_COOKIE_NAME,
             'jwt_token_here',
-            expect.objectContaining({
-                secure: true,
-                sameSite: 'none',
-            }),
+            expect.objectContaining({ secure: true, sameSite: 'none' }),
         );
+    });
+
+    describe('googleLogin', () => {
+        it('deve retornar erro quando a credencial não é enviada', async () => {
+            mockRequest.body = {};
+
+            await googleLogin(mockRequest as FastifyRequest, mockReply as FastifyReply);
+
+            expect(mockReply.status).toHaveBeenCalledWith(400);
+            expect(mockReply.send).toHaveBeenCalledWith({
+                message: 'Credencial do Google é obrigatória.',
+            });
+            expect(authService.loginWithGoogle).not.toHaveBeenCalled();
+        });
+
+        it('deve autenticar usuário e configurar cookie', async () => {
+            mockRequest.body = { credential: 'google-credential' };
+            vi.mocked(authService.loginWithGoogle).mockResolvedValue({
+                id: 1,
+                firstName: 'João',
+                lastName: 'Silva',
+                email: 'joao@test.com',
+                role: 'USER',
+            } as any);
+
+            await googleLogin(mockRequest as FastifyRequest, mockReply as FastifyReply);
+
+            expect(authService.loginWithGoogle).toHaveBeenCalledWith('google-credential');
+            expect(mockReply.setCookie).toHaveBeenCalledWith(
+                AUTH_COOKIE_NAME,
+                'jwt_token_here',
+                expect.objectContaining({ secure: false, sameSite: 'lax' }),
+            );
+            expect(mockReply.status).toHaveBeenCalledWith(200);
+            expect(mockReply.send).toHaveBeenCalledWith({
+                user: expect.objectContaining({ email: 'joao@test.com' }),
+            });
+        });
     });
 
     // ========== TESTES DE REGISTRO ==========

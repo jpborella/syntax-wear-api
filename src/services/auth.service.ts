@@ -86,7 +86,7 @@ export const loginWithGoogle = async (credential: string) => {
 
     const ticket = await client.verifyIdToken({
         idToken: credential,
-        audience: googleClientId,
+        audience: clientId,
     });
 
     const payload = ticket.getPayload();
