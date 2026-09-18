@@ -3,6 +3,7 @@ import { loginUser, loginWithGoogle, registerUser, sanitizeUser } from "../servi
 import { AuthRequest, RegisterRequest } from "../types";
 import { loginSchema, registerSchema, updateProfileSchema } from "../utils/validator";
 import { prisma } from "../utils/prisma";
+import { AUTH_COOKIE_NAME, getAuthCookieOptions } from "../config/auth-cookie";
 
 export const register = async (request: FastifyRequest, reply: FastifyReply) => {
 
@@ -12,13 +13,7 @@ export const register = async (request: FastifyRequest, reply: FastifyReply) => 
     const authUser = sanitizeUser(user);
     const token = request.server.jwt.sign({ userId: user.id });
 
-    reply.setCookie('syntaxwear.token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-    });
+    reply.setCookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions());
 
     reply.status(201).send({ ...authUser, token });
 };
@@ -32,13 +27,7 @@ export const login = async (request: FastifyRequest<{ Body: AuthRequest }>, repl
 
     const token = request.server.jwt.sign({ userId: user.id });
 
-    reply.setCookie('syntaxwear.token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-    });
+    reply.setCookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions());
 
     reply.status(200).send({ ...sanitizeUser(user), token });
 };
@@ -74,13 +63,7 @@ export const googleLogin = async (request: FastifyRequest<{ Body: { credential: 
 
     const token = request.server.jwt.sign({ userId: user.id });
 
-    reply.setCookie('syntaxwear.token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-    });
+    reply.setCookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions());
 
     reply.status(200).send({
         user,
@@ -88,12 +71,7 @@ export const googleLogin = async (request: FastifyRequest<{ Body: { credential: 
 };
 
 export const signOut = async (request: FastifyRequest, reply: FastifyReply) => {
-    reply.clearCookie('syntaxwear.token', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-    });
+    reply.clearCookie(AUTH_COOKIE_NAME, getAuthCookieOptions());
 
     reply.status(200).send({ message: "Logout realizado com sucesso." });
 };

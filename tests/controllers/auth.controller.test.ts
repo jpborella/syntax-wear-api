@@ -6,6 +6,7 @@ import {
 } from '../../src/controllers/auth.controller';
 import * as authService from '../../src/services/auth.service';
 import { ConflictError, UnauthorizedError, NotFoundError } from '../../src/types';
+import { AUTH_COOKIE_NAME } from '../../src/config/auth-cookie';
 
 // Mock do service
 vi.mock('../../src/services/auth.service', async () => {
@@ -28,6 +29,7 @@ describe('Auth Controller', () => {
     let mockReply: Partial<FastifyReply>;
 
     beforeEach(() => {
+        process.env.NODE_ENV = 'development';
         mockRequest = {
             body: {},
             server: {
@@ -42,6 +44,61 @@ describe('Auth Controller', () => {
             send: vi.fn().mockReturnThis(),
         };
         vi.clearAllMocks();
+    });
+
+    it('configura o cookie de autenticação para desenvolvimento local', async () => {
+        mockRequest.body = {
+            firstName: 'João',
+            lastName: 'Silva',
+            email: 'joao@test.com',
+            password: 'senha123',
+        };
+        vi.mocked(authService.registerUser).mockResolvedValue({
+            id: 1,
+            firstName: 'João',
+            lastName: 'Silva',
+            email: 'joao@test.com',
+            password: 'hashed',
+            role: 'USER',
+        } as any);
+
+        await register(mockRequest as FastifyRequest, mockReply as FastifyReply);
+
+        expect(mockReply.setCookie).toHaveBeenCalledWith(
+            AUTH_COOKIE_NAME,
+            'jwt_token_here',
+            expect.objectContaining({
+                secure: false,
+                sameSite: 'lax',
+            }),
+        );
+    });
+
+    it('configura o cookie de autenticação para produção', async () => {
+        process.env.NODE_ENV = 'production';
+        mockRequest.body = {
+            email: 'joao@test.com',
+            password: 'senha123',
+        };
+        vi.mocked(authService.loginUser).mockResolvedValue({
+            id: 1,
+            firstName: 'João',
+            lastName: 'Silva',
+            email: 'joao@test.com',
+            password: 'hashed',
+            role: 'USER',
+        } as any);
+
+        await login(mockRequest as FastifyRequest, mockReply as FastifyReply);
+
+        expect(mockReply.setCookie).toHaveBeenCalledWith(
+            AUTH_COOKIE_NAME,
+            'jwt_token_here',
+            expect.objectContaining({
+                secure: true,
+                sameSite: 'none',
+            }),
+        );
     });
 
     // ========== TESTES DE REGISTRO ==========

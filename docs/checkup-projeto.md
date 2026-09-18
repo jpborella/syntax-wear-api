@@ -14,7 +14,7 @@ A ordem abaixo considera impacto, risco, clareza para um desenvolvedor júnior e
 
 ### 1. [CONCLUÍDO] Corrigir CORS em produção
 
-**Status:** concluído em 17/09/2026. O CORS agora aceita apenas `http://localhost:5173` e `https://syntax-wear-shop-online.vercel.app`. A alteração foi validada com o build TypeScript do backend.
+**Status:** concluído. O CORS agora aceita apenas `http://localhost:5173` e `https://syntax-wear-shop-online.vercel.app`. A alteração foi validada com o build TypeScript do backend.
 
 **Arquivo:** `syntax-wear-api/src/app.ts`
 
@@ -40,7 +40,9 @@ fastify.register(cors, {
 
 ---
 
-### 2. [NECESSÁRIO] Corrigir cookies entre frontend e backend
+### 2. [CONCLUÍDO] Corrigir cookies entre frontend e backend
+
+**Status:** concluído. A configuração do cookie JWT foi centralizada em `syntax-wear-api/src/config/auth-cookie.ts`. Em desenvolvimento, o cookie usa `SameSite=Lax`; em produção, usa `SameSite=None` e `Secure=true` para funcionar entre domínios diferentes. O frontend já envia `credentials: "include"` nas requisições autenticadas.
 
 **Arquivo:** `syntax-wear-api/src/controllers/auth.controller.ts`
 
@@ -53,7 +55,7 @@ sameSite: "none",
 secure: true,
 ```
 
-No desenvolvimento local, `lax` pode continuar sendo usado. A configuração deve variar conforme `NODE_ENV`.
+No desenvolvimento local, `lax` continua sendo usado. A configuração agora varia automaticamente conforme `NODE_ENV`, e a mesma configuração é usada para criar e limpar o cookie.
 
 **Por que importa:** sem o cookie, o login pode retornar sucesso, mas `/auth/profile` continuará tratando o usuário como não autenticado.
 
@@ -63,7 +65,7 @@ No desenvolvimento local, `lax` pode continuar sendo usado. A configuração dev
 
 ### 3. [CONCLUÍDO] Validar variáveis de ambiente
 
-**Status:** concluído em 18/09/2026. O backend e o frontend agora validam as variáveis obrigatórias na inicialização/build e exibem o nome da variável ausente na mensagem de erro.
+**Status:** concluído. O backend e o frontend agora validam as variáveis obrigatórias na inicialização/build e exibem o nome da variável ausente na mensagem de erro.
 
 **Arquivos principais:**
 
@@ -424,7 +426,7 @@ Depois das correções funcionais:
 
 1. CORS em produção (concluído).
 2. Variáveis de ambiente (concluído).
-3. Cookies de autenticação.
+3. Cookies de autenticação (concluído).
 4. Google Login.
 5. Remoção de logs de debug.
 6. Tratamento de erros.
@@ -442,7 +444,7 @@ Depois das correções funcionais:
 
 ### Necessários Antes De Mostrar O Site
 
-Itens 2, 4 e 12. Sem eles, a aplicação pode falhar em produção, deixar o usuário desautenticado ou expor dados no console.
+Itens 4 e 12. Sem eles, a aplicação pode falhar em produção ou expor dados no console.
 
 O item 10 também é necessário se o recrutador puder criar pedidos ou testar o estoque com requisições simultâneas. Para uma demonstração apenas visual, ele pode ser tratado depois.
 
@@ -472,4 +474,4 @@ Itens 16, 17 e 19. São melhorias de organização e acabamento. Devem ser feita
 
 ## Próximo Passo Sugerido
 
-Continuar pela correção dos cookies entre frontend e backend. Depois, validar login local e em produção antes de avançar para os demais itens.
+Continuar pelo item 4: corrigir e validar o Google Login. Depois, revisar o fluxo de estoque antes de iniciar a integração do Stripe.

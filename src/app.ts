@@ -13,6 +13,7 @@ import Fastify from 'fastify';
 import { errorHandler } from './middlewares/error.middleware';
 import fastifyCookie from '@fastify/cookie';
 import { validateEnv } from './config/env';
+import { AUTH_COOKIE_NAME } from './config/auth-cookie';
 
 const allowedOrigins = [
     'http://localhost:5173',
@@ -35,7 +36,7 @@ export async function buildApp() {
     fastify.register(jwt, {
         secret: env.JWT_SECRET,
         cookie: {
-            cookieName: 'syntaxwear.token',
+            cookieName: AUTH_COOKIE_NAME,
             signed: false, // Define se o cookie deve ser assinado (opcional) - nao estamos usando assinatura de cookie, apenas JWT
         },
         sign: {
