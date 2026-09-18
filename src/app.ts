@@ -17,6 +17,11 @@ const JWT_SECRET: string = process.env.JWT_SECRET || (() => {
     throw new Error('JWT_SECRET não definida no ambiente');
 })();
 
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://syntax-wear-shop-online.vercel.app',
+];
+
 export async function buildApp() {
     const fastify = Fastify({
         logger: true,
@@ -47,7 +52,7 @@ export async function buildApp() {
     });
 
     fastify.register(cors, {
-        origin: true,
+        origin: allowedOrigins,
         credentials: true,
         methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     });
