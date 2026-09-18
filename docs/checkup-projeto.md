@@ -61,10 +61,14 @@ No desenvolvimento local, `lax` pode continuar sendo usado. A configuração dev
 
 ---
 
-### 3. [NECESSÁRIO] Validar variáveis de ambiente
+### 3. [CONCLUÍDO] Validar variáveis de ambiente
+
+**Status:** concluído em 18/09/2026. O backend e o frontend agora validam as variáveis obrigatórias na inicialização/build e exibem o nome da variável ausente na mensagem de erro.
 
 **Arquivos principais:**
 
+- `syntax-wear-api/src/config/env.ts`
+- `syntax-wear-shop-online/src/config/env.ts`
 - `syntax-wear-shop-online/src/services/api.ts`
 - `syntax-wear-shop-online/src/App.tsx`
 - `syntax-wear-api/src/app.ts`
@@ -86,7 +90,7 @@ GOOGLE_CLIENT_ID=...
 NODE_ENV=development
 ```
 
-Hoje algumas variáveis podem estar ausentes e só causar erro durante o uso. O ideal é validar tudo na inicialização e exibir uma mensagem clara.
+As variáveis obrigatórias agora são validadas antes do uso. Se alguma estiver ausente, a aplicação informa exatamente qual configuração precisa ser definida, sem exibir o valor de nenhum segredo.
 
 **Por que importa:** evita deploy aparentemente bem-sucedido, mas aplicação quebrada em produção.
 
@@ -419,7 +423,7 @@ Depois das correções funcionais:
 ## Ordem Prática Para Aplicar
 
 1. CORS em produção (concluído).
-2. Variáveis de ambiente.
+2. Variáveis de ambiente (concluído).
 3. Cookies de autenticação.
 4. Google Login.
 5. Remoção de logs de debug.
@@ -438,7 +442,7 @@ Depois das correções funcionais:
 
 ### Necessários Antes De Mostrar O Site
 
-Itens 1 a 4 e o item 12. Sem eles, a aplicação pode falhar em produção, deixar o usuário desautenticado ou expor dados no console.
+Itens 2, 4 e 12. Sem eles, a aplicação pode falhar em produção, deixar o usuário desautenticado ou expor dados no console.
 
 O item 10 também é necessário se o recrutador puder criar pedidos ou testar o estoque com requisições simultâneas. Para uma demonstração apenas visual, ele pode ser tratado depois.
 
@@ -468,4 +472,4 @@ Itens 16, 17 e 19. São melhorias de organização e acabamento. Devem ser feita
 
 ## Próximo Passo Sugerido
 
-Continuar pelo item 2: corrigir cookies entre frontend e backend. Depois, validar login local e em produção antes de avançar para os demais itens.
+Continuar pela correção dos cookies entre frontend e backend. Depois, validar login local e em produção antes de avançar para os demais itens.

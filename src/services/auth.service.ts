@@ -3,6 +3,7 @@ import { prisma } from "../utils/prisma";
 import bcrypt from "bcrypt";
 import { sanitizeUser } from "../utils/auth.utils";
 import { OAuth2Client } from "google-auth-library";
+import { getRequiredEnv } from "../config/env";
 
 const parseBrDate = (value: string) => {
     const [day, month, year] = value.split("/");
@@ -70,12 +71,22 @@ export const loginUser = async (data: AuthRequest) => {
     return userWithoutPassword;
 };
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+let googleClient: OAuth2Client | undefined;
+let googleClientId: string | undefined;
+
+const getGoogleConfig = () => {
+    googleClientId ??= getRequiredEnv("GOOGLE_CLIENT_ID");
+    googleClient ??= new OAuth2Client(googleClientId);
+
+    return { client: googleClient, clientId: googleClientId };
+};
 
 export const loginWithGoogle = async (credential: string) => {
-    const ticket = await googleClient.verifyIdToken({
+    const { client, clientId } = getGoogleConfig();
+
+    const ticket = await client.verifyIdToken({
         idToken: credential,
-        audience: process.env.GOOGLE_CLIENT_ID,
+        audience: googleClientId,
     });
 
     const payload = ticket.getPayload();

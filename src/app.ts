@@ -12,10 +12,7 @@ import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
 import { errorHandler } from './middlewares/error.middleware';
 import fastifyCookie from '@fastify/cookie';
-
-const JWT_SECRET: string = process.env.JWT_SECRET || (() => {
-    throw new Error('JWT_SECRET não definida no ambiente');
-})();
+import { validateEnv } from './config/env';
 
 const allowedOrigins = [
     'http://localhost:5173',
@@ -23,6 +20,7 @@ const allowedOrigins = [
 ];
 
 export async function buildApp() {
+    const env = validateEnv();
     const fastify = Fastify({
         logger: true,
     });
@@ -35,7 +33,7 @@ export async function buildApp() {
     fastify.register(fastifyCookie);
 
     fastify.register(jwt, {
-        secret: process.env.JWT_SECRET!,
+        secret: env.JWT_SECRET,
         cookie: {
             cookieName: 'syntaxwear.token',
             signed: false, // Define se o cookie deve ser assinado (opcional) - nao estamos usando assinatura de cookie, apenas JWT
