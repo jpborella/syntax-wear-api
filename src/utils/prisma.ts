@@ -13,9 +13,18 @@ if (!dbUrl.searchParams.has("sslmode")) {
     dbUrl.searchParams.set("sslmode", "require");
 }
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const prisma = new PrismaClient({
     adapter: new PrismaPg({
         connectionString: dbUrl.toString(),
+        ...(isProduction
+            ? {
+                ssl: {
+                    rejectUnauthorized: false,
+                },
+            }
+            : {}),
     }),
 });
 
