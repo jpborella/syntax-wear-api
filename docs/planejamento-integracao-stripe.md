@@ -4,14 +4,16 @@ Documento para registrar a decisão e a ordem de implementação do Stripe como 
 
 ## Decisão
 
-A integração do Stripe deve ser feita depois das melhorias essenciais de autenticação e ambiente, mas antes das melhorias de organização, tipagem e acabamento visual.
+A integração do Stripe foi adiada para depois da finalização do checkup do projeto e da estabilização do fluxo principal do e-commerce.
 
-O CORS, a validação das variáveis de ambiente, os cookies de autenticação e o Google Login já foram corrigidos. Antes de iniciar o Stripe, a ordem recomendada é:
+Neste momento, a prioridade do portfólio é concluir a base do app, validar o checkout e o estoque, e manter a documentação e a qualidade do projeto. O Stripe permanece como uma etapa futura e opcional, e não é obrigatório para a apresentação atual.
+
+A ordem recomendada continua sendo:
 
 1. Revisar a transação de estoque para o checkout.
-2. Integrar o Stripe.
-3. Testar o checkout, a confirmação do pagamento e o webhook.
-4. Continuar com Swagger, testes adicionais, README e organização do projeto.
+2. Finalizar o checkup do projeto.
+3. Revisar Swagger, testes, README e organização.
+4. Decidir se será necessário integrar o Stripe em uma segunda fase.
 
 ## Por que aguardar essas etapas
 
@@ -64,4 +66,5 @@ O fluxo esperado é:
 - Cookies de autenticação: concluído.
 - Google Login: concluído no código; configuração do domínio de produção pendente.
 - Transação de estoque: pendente.
-- Integração Stripe: planejada para depois dessas etapas.
+- Checkup do projeto: etapa ativa.
+- Integração Stripe: adiada, opcional e planejada para uma fase posterior.

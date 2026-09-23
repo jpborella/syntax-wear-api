@@ -10,6 +10,12 @@ A ordem abaixo considera impacto, risco, clareza para um desenvolvedor júnior e
 - **AVISO — RECOMENDADO:** não impede a demonstração, mas melhora segurança, qualidade ou confiança do recrutador.
 - **AVISO — OPCIONAL:** melhoria de organização ou acabamento que pode ficar para depois das correções funcionais.
 
+## Situação Atual
+
+A prioridade atual do projeto não inclui a integração do Stripe. A decisão foi adiar esse item para depois do checkup final e da estabilização do negócio principal do e-commerce, mantendo o foco em qualidade, segurança e apresentação para portfólio.
+
+Essa revisão considera que o Stripe é uma etapa futura e opcional, e não uma dependência para a apresentação do projeto neste momento.
+
 ## Ordem Recomendada
 
 ### 1. [CONCLUÍDO] Corrigir CORS em produção
@@ -432,9 +438,9 @@ Depois das correções funcionais:
 2. Variáveis de ambiente (concluído).
 3. Cookies de autenticação (concluído).
 4. Google Login (concluído).
-5. Remoção de logs de debug.
-6. Tratamento de erros.
-7. Transação de estoque, se o checkout for demonstrado.
+5. Revisão da transação de estoque e checkout.
+6. Remoção de logs de debug.
+7. Tratamento de erros.
 8. Swagger e validações.
 9. Remoção de `any` e tipagem do `useSearch`.
 10. Testes de pedidos, carrinho e autorização.
@@ -443,22 +449,23 @@ Depois das correções funcionais:
 13. Estratégia do carrinho.
 14. Centralização de configurações.
 15. Padronização de nomes e formatação visual.
+16. Stripe (etapa futura e opcional, não obrigatória para a entrega atual).
 
 ## Resumo Dos Avisos
 
 ### Necessários Antes De Mostrar O Site
 
-Item 12. Sem ele, a aplicação pode expor dados no console.
+O item 5 é o maior ponto crítico da etapa atual: a transação de estoque precisa ser revisada para evitar inconsistências em pedidos simultâneos.
 
-O item 10 também é necessário se o recrutador puder criar pedidos ou testar o estoque com requisições simultâneas. Para uma demonstração apenas visual, ele pode ser tratado depois.
+O item 6 também é necessário antes da publicação, porque logs de debug podem expor dados sensíveis no console de produção.
 
 ### Recomendados Para Um Projeto Apresentável
 
-Itens 5 a 9, 11 e 13 a 15, além do item 18. Eles não necessariamente impedem o site de abrir, mas elevam a qualidade técnica, a segurança e a facilidade de avaliação.
+Itens 7 a 12, 13 e 15, além do item 18. Eles não necessariamente impedem o site de abrir, mas elevam a qualidade técnica, a segurança e a facilidade de avaliação.
 
 ### Opcionais Para Uma Segunda Etapa
 
-Itens 16, 17 e 19. São melhorias de organização e acabamento. Devem ser feitas depois que o comportamento principal estiver funcionando e coberto por testes.
+Itens 14, 16 e 17. São melhorias de organização, acabamento e escopo extra. O Stripe se mantém como etapa futura, dependendo da decisão final do projeto.
 
 ## Pontos Positivos Já Existentes
 
@@ -478,4 +485,4 @@ Itens 16, 17 e 19. São melhorias de organização e acabamento. Devem ser feita
 
 ## Próximo Passo Sugerido
 
-Continuar pelo item 10: revisar a transação de estoque antes de iniciar a integração do Stripe.
+O próximo passo ativo é o item 5: revisar a transação de estoque e validar o fluxo de checkout antes de qualquer integração de pagamento. O Stripe ficou como etapa futura e opcional, e não deve bloquear a finalização do checkup.

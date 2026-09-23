@@ -14,6 +14,7 @@ vi.mock('../../src/utils/prisma', () => ({
         product: {
             findMany: vi.fn(),
             update: vi.fn(),
+            updateMany: vi.fn(),
         },
         $transaction: vi.fn(),
     },
@@ -227,22 +228,25 @@ describe('Order Services', () => {
             };
 
             (prisma.product.findMany as any).mockResolvedValueOnce([mockProduct]);
-            (prisma.order.create as any).mockResolvedValueOnce(mockOrder);
+            (prisma.$transaction as any).mockImplementationOnce(async (callback) => {
+                const tx = {
+                    product: {
+                        updateMany: vi.fn().mockResolvedValueOnce({ count: 1 }),
+                    },
+                    order: {
+                        create: vi.fn().mockResolvedValueOnce(mockOrder),
+                    },
+                };
+
+                return callback(tx);
+            });
 
             // Act
             const result = await createOrder(createPayload, mockAuthUser.id);
 
             // Assert
             expect(result).toEqual(mockOrder);
-            expect(prisma.order.create).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    data: expect.objectContaining({
-                        userId: mockAuthUser.id,
-                        paymentMethod: 'CARD',
-                        status: 'PENDING',
-                    }),
-                })
-            );
+            expect(prisma.$transaction).toHaveBeenCalledTimes(1);
         });
 
         it('deve calcular total corretamente', async () => {
@@ -254,14 +258,74 @@ describe('Order Services', () => {
             };
 
             (prisma.product.findMany as any).mockResolvedValueOnce([mockProduct]);
-            (prisma.order.create as any).mockResolvedValueOnce(mockOrder);
+            (prisma.$transaction as any).mockImplementationOnce(async (callback) => {
+                const tx = {
+                    product: {
+                        updateMany: vi.fn().mockResolvedValueOnce({ count: 1 }),
+                    },
+                    order: {
+                        create: vi.fn().mockResolvedValueOnce(mockOrder),
+                    },
+                };
+
+                return callback(tx);
+            });
 
             // Act
             await createOrder(createPayload, mockAuthUser.id);
 
             // Assert
-            const createCall = (prisma.order.create as any).mock.calls[0];
+            const transactionFn = (prisma.$transaction as any).mock.calls[0][0];
+            const tx = {
+                product: {
+                    updateMany: vi.fn().mockResolvedValueOnce({ count: 1 }),
+                },
+                order: {
+                    create: vi.fn().mockResolvedValueOnce(mockOrder),
+                },
+            };
+
+            await transactionFn(tx);
+            const createCall = tx.order.create.mock.calls[0];
             expect(createCall[0].data.total).toEqual(new Prisma.Decimal('100.00'));
+        });
+
+        it('deve reservar estoque dentro da transação ao criar pedido', async () => {
+            // Arrange
+            const createPayload: CreateOrder = {
+                items: [{ productId: 1, quantity: 2 }],
+                paymentMethod: 'CARD',
+                shippingAddress: mockShippingAddress,
+            };
+
+            const transactionOrder = {
+                ...mockOrder,
+                status: 'PENDING' as const,
+            };
+
+            const mockedTx = {
+                product: {
+                    updateMany: vi.fn().mockResolvedValueOnce({ count: 1 }),
+                },
+                order: {
+                    create: vi.fn().mockResolvedValueOnce(transactionOrder),
+                },
+            };
+
+            (prisma.product.findMany as any).mockResolvedValueOnce([mockProduct]);
+            (prisma.$transaction as any).mockImplementationOnce(async (callback) => callback(mockedTx));
+
+            // Act
+            const result = await createOrder(createPayload, mockAuthUser.id);
+
+            // Assert
+            expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+            expect(mockedTx.product.updateMany).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    where: expect.objectContaining({ id: 1, stock: { gte: 2 } }),
+                })
+            );
+            expect(result).toEqual(transactionOrder);
         });
 
         it('deve lançar erro se produto não encontrado', async () => {

@@ -79,14 +79,21 @@ const applyOrderStatus = async (
 
     const updatedOrder = await prisma.$transaction(async (tx) => {
         if (shouldDecrement) {
-            await Promise.all(
-                Array.from(quantityByProductId.entries()).map(([productId, quantity]) =>
-                    tx.product.update({
-                        where: { id: productId },
-                        data: { stock: { decrement: quantity } },
-                    })
-                )
-            );
+            for (const [productId, quantity] of quantityByProductId.entries()) {
+                const updated = await tx.product.updateMany({
+                    where: {
+                        id: productId,
+                        stock: { gte: quantity },
+                    },
+                    data: {
+                        stock: { decrement: quantity },
+                    },
+                });
+
+                if (updated.count === 0) {
+                    throw new Error("Estoque insuficiente para o produto selecionado.");
+                }
+            }
         }
 
         if (shouldIncrement) {
@@ -235,24 +242,44 @@ export const createOrder = async (payload: CreateOrder, userId: number) => {
         };
     });
 
-    const order = await prisma.order.create({
-        data: {
-            userId,
-            paymentMethod: payload.paymentMethod,
-            shippingAddress: payload.shippingAddress as unknown as Prisma.InputJsonValue,
-            total,
-            status: "PENDING",
-            items: {
-                create: itemsData,
-            },
-        },
-        include: {
-            items: {
-                include: {
-                    product: true,
+    const order = await prisma.$transaction(async (tx) => {
+        for (const [productId, quantity] of quantityByProductId.entries()) {
+            const updated = await tx.product.updateMany({
+                where: {
+                    id: productId,
+                    stock: { gte: quantity },
+                },
+                data: {
+                    stock: { decrement: quantity },
+                },
+            });
+
+            if (updated.count === 0) {
+                throw new Error("Estoque insuficiente para o produto selecionado.");
+            }
+        }
+
+        const createdOrder = await tx.order.create({
+            data: {
+                userId,
+                paymentMethod: payload.paymentMethod,
+                shippingAddress: payload.shippingAddress as unknown as Prisma.InputJsonValue,
+                total,
+                status: "PENDING",
+                items: {
+                    create: itemsData,
                 },
             },
-        },
+            include: {
+                items: {
+                    include: {
+                        product: true,
+                    },
+                },
+            },
+        });
+
+        return createdOrder;
     });
 
     return order;
