@@ -8,12 +8,13 @@ if (!connectionString) {
 }
 
 const dbUrl = new URL(connectionString);
+const isProduction = process.env.NODE_ENV === "production";
 
-if (!dbUrl.searchParams.has("sslmode")) {
+if (isProduction) {
+    dbUrl.searchParams.delete("sslmode");
+} else if (!dbUrl.searchParams.has("sslmode")) {
     dbUrl.searchParams.set("sslmode", "require");
 }
-
-const isProduction = process.env.NODE_ENV === "production";
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({
