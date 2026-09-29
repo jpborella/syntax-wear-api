@@ -5,7 +5,6 @@ export interface UserResponse {
     name: string;
     email: string;
     role: Role;
-    phone?: string | null;
 }
 
 export interface AuthResponse extends UserResponse {

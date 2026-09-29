@@ -375,34 +375,24 @@ Não é obrigatório renomear tudo, mas é importante escolher um padrão e apli
 
 ---
 
-### 18. [RECOMENDADO] Adicionar lint e comando de verificação no backend
+### 18. [CONCLUÍDO] Adicionar comando de verificação no backend
 
-O frontend já possui lint, mas o backend não possui uma configuração equivalente.
-
-Sugestão futura:
+O backend passou a ter um comando centralizado para validar a base do projeto antes do push:
 
 ```json
 {
     "scripts": {
-        "lint": "eslint .",
-        "check": "npm run lint && npm run build && npm run test:run"
+        "typecheck": "tsc --noEmit",
+        "check": "npm run typecheck && npm run test:run"
     }
 }
 ```
 
-No frontend:
+Essa escolha foi feita para manter o escopo realista: o backend ainda não possui lint configurado, mas já conta com uma verificação simples e útil para validar build e testes em um único passo.
 
-```json
-{
-    "scripts": {
-        "check": "npm run lint && npm run build"
-    }
-}
-```
+**Por que importa:** permite validar o projeto antes de cada push com poucos comandos e sem depender de configuração extra de lint.
 
-**Por que importa:** permite validar o projeto antes de cada push com comandos simples.
-
-**Dificuldade:** média.
+**Dificuldade:** baixa.
 
 ---
 

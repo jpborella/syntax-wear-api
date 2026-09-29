@@ -9,7 +9,6 @@ export const sanitizeUser = (user: Omit<User, "password">): UserResponse => ({
     name: `${user.firstName} ${user.lastName}`.trim(),
     email: user.email,
     role: user.role,
-    phone: user.phone,
 });
 
 /**
