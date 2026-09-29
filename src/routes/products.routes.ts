@@ -22,7 +22,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
                                     properties: {
                                         id: { type: "number" },
                                         name: { type: "string" },
-                                        description: { type: "string" },
+                                        slug: { type: "string" },
                                         price: { type: "number" },
                                         images: {
                                             type: "array",
@@ -32,8 +32,9 @@ export default async function productRoutes(fastify: FastifyInstance) {
                                             type: "array",
                                             items: { type: "string" },
                                         },
+                                        stock: { type: "number" },
+                                        categoryId: { type: "number" },
                                         createdAt: { type: "string", format: "date-time" },
-                                        updatedAt: { type: "string", format: "date-time" },
                                     },
                                 },
                             },
@@ -105,27 +106,28 @@ export default async function productRoutes(fastify: FastifyInstance) {
                         properties: {
                             id: { type: "number" },
                             name: { type: "string" },
-                            price: { type: "number" },
-                            createdAt: { type: "string", format: "date-time" },
-                            color: { type: "string" },
+                            slug: { type: "string" },
                             description: { type: "string" },
-                            stock: { type: "number" },
-                            sizes: {
+                            price: { type: "number" },
+                            images: {
                                 type: "array",
                                 items: { type: "string" },
                             },
-                            images: {
+                            sizes: {
                                 type: "array",
-                                items: { type: "string", format: "uri" },
+                                items: { type: "string" },
                             },
                             colors: {
                                 type: "array",
                                 items: { type: "string" },
                             },
-                            slug: { type: "string" },
+                            stock: { type: "number" },
                             active: { type: "boolean" },
+                            categoryId: { type: "number" },
+                            gender: { type: "string", nullable: true },
+                            isOutlet: { type: "boolean", nullable: true },
+                            createdAt: { type: "string", format: "date-time" },
                             updatedAt: { type: "string", format: "date-time" },
-                            categoryID: { type: "number" },
                             category: {
                                 type: "object",
                                 properties: {
@@ -178,13 +180,13 @@ export default async function productRoutes(fastify: FastifyInstance) {
                 description: "Criar um novo produto",
                 body: {
                     type: "object",
-                    required: ["name", "description", "price", "categoryId"],
+                    required: ["name", "description", "price", "stock", "categoryId"],
                     properties: {
                         name: { type: "string", description: "Nome do produto" },
                         description: { type: "string", description: "Descrição do produto" },
                         price: { type: "number", description: "Preço do produto" },
-                        categoryId: { type: "number", description: "ID da categoria" },
                         stock: { type: "number", description: "Quantidade em estoque" },
+                        categoryId: { type: "number", description: "ID da categoria" },
                         colors: {
                             type: "array",
                             items: { type: "string" },
@@ -200,6 +202,8 @@ export default async function productRoutes(fastify: FastifyInstance) {
                             items: { type: "string" },
                             description: "Tamanhos disponíveis",
                         },
+                        active: { type: "boolean", description: "Produto ativo" },
+                        slug: { type: "string", description: "Slug do produto" },
                     },
                 },
                 response: {

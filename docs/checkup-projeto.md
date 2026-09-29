@@ -178,7 +178,7 @@ O ideal é definir o schema de busca da rota e permitir que o TanStack Router in
 
 ---
 
-### 7. [RECOMENDADO] Padronizar validação e Swagger
+### 7. [CONCLUÍDO] Padronizar validação e Swagger
 
 **Arquivos:**
 
@@ -186,15 +186,16 @@ O ideal é definir o schema de busca da rota e permitir que o TanStack Router in
 - `syntax-wear-api/src/routes/orders.routes.ts`
 - `syntax-wear-api/src/utils/validator.ts`
 
-A API usa schemas Swagger extensos, mas eles nem sempre refletem exatamente os dados reais. Exemplos observados:
+A API foi revisada para manter Zod, tipos TypeScript e schemas Swagger alinhados com a resposta real da API.
 
-- `categoryID` aparece na documentação, mas o campo real é `categoryId`.
-- A listagem de produtos documenta campos que não aparecem no `select`.
-- Alguns campos obrigatórios não estão marcados como `required`.
+Os ajustes mais relevantes foram:
 
-**Melhoria:** manter Zod, tipos TypeScript, schemas Swagger e respostas reais sincronizados.
+- corrigir o nome `categoryId` em vez de `categoryID`;
+- remover campos que não existiam no retorno do `select` de listagem;
+- refletir corretamente os campos obrigatórios e opcionais do cadastro de produto;
+- manter as respostas documentadas próximas ao comportamento real da rota.
 
-**Por que importa:** documentação correta facilita a avaliação da API.
+**Por que importa:** documentação correta facilita a avaliação da API e reduz confusão na demonstração do projeto.
 
 **Dificuldade:** média.
 
