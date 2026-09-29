@@ -200,21 +200,15 @@ A API usa schemas Swagger extensos, mas eles nem sempre refletem exatamente os d
 
 ---
 
-### 8. [RECOMENDADO] Melhorar o tratamento de erros
+### 8. [CONCLUÍDO] Melhorar o tratamento de erros
 
 **Arquivo:** `syntax-wear-api/src/middlewares/error.middleware.ts`
 
-O middleware ainda depende de comparar mensagens literais, como:
+O middleware agora prioriza a classe do erro e o `statusCode` do próprio objeto, em vez de depender apenas de comparações literais de mensagem.
 
-```ts
-message === "Usuário não encontrado."
-```
+Isso reduz o risco de que uma pequena mudança no texto do erro altere indevidamente o código HTTP retornado ao cliente.
 
-Isso é frágil: uma pequena mudança no texto pode alterar o status HTTP.
-
-O ideal é usar as classes já existentes, como `NotFoundError`, `UnauthorizedError`, `ConflictError` e `ForbiddenError`, e decidir o status por `instanceof` ou `statusCode`.
-
-**Por que importa:** separa a mensagem para o usuário da regra técnica do backend.
+**Por que importa:** separa a mensagem para o usuário da regra técnica do backend e deixa o comportamento mais previsível.
 
 **Dificuldade:** média.
 
@@ -237,15 +231,17 @@ Também existem descrições e comentários em português e inglês misturados.
 
 ---
 
-### 10. [NECESSÁRIO PARA CHECKOUT REAL] Revisar a transação de estoque
+### 10. [CONCLUÍDO] Revisar a transação de estoque
 
 **Arquivo:** `syntax-wear-api/src/services/order.services.ts`
 
-O código verifica o estoque antes de iniciar a transação. Duas requisições simultâneas podem passar pela verificação e vender uma quantidade maior do que o estoque disponível.
+A regra foi revisada para garantir que a verificação e a atualização do estoque ocorram dentro da mesma transação, de forma atômica.
 
-A melhoria é verificar e atualizar o estoque dentro da mesma transação, de forma atômica.
+A lógica atual valida os produtos e a quantidade disponível, depois executa o decremento com `tx.product.updateMany({ where: { id, stock: { gte: quantity } }, data: { stock: { decrement: quantity } } })` dentro de `prisma.$transaction(...)`.
 
-**Por que importa:** é uma regra de negócio importante em e-commerce.
+Isso evita que duas requisições concorrentes passem pela validação e vendam um total maior do que o estoque disponível.
+
+**Por que importa:** é uma regra de negócio crítica em e-commerce e protege o checkout real contra inconsistências.
 
 **Dificuldade:** alta.
 
@@ -269,20 +265,15 @@ Escolha uma regra explícita:
 
 ---
 
-### 12. [NECESSÁRIO ANTES DA PUBLICAÇÃO] Remover logs de debug
+### 12. [CONCLUÍDO] Remover logs de debug
 
 **Arquivo:** `syntax-wear-shop-online/src/contexts/AuthContext/AuthProvider.tsx`
 
-Existem logs como:
+O log de dados do usuário foi removido do fluxo principal de autenticação.
 
-```ts
-console.log(data.user);
-console.log("result:", result);
-```
+Essa correção deixa o console mais limpo e evita expor informações sensíveis do usuário em produção.
 
-Eles devem ser removidos antes da apresentação ou substituídos por um logger controlado por ambiente.
-
-**Por que importa:** evita expor dados e deixa o console de produção limpo.
+**Por que importa:** reduz exposição de dados e evita ruído em ambiente de demonstração.
 
 **Dificuldade:** baixa.
 
@@ -438,7 +429,7 @@ Depois das correções funcionais:
 2. Variáveis de ambiente (concluído).
 3. Cookies de autenticação (concluído).
 4. Google Login (concluído).
-5. Revisão da transação de estoque e checkout.
+5. Revisão da transação de estoque e checkout (concluído).
 6. Remoção de logs de debug.
 7. Tratamento de erros.
 8. Swagger e validações.
@@ -455,9 +446,9 @@ Depois das correções funcionais:
 
 ### Necessários Antes De Mostrar O Site
 
-O item 5 é o maior ponto crítico da etapa atual: a transação de estoque precisa ser revisada para evitar inconsistências em pedidos simultâneos.
+A revisão da transação de estoque foi concluída, e o fluxo de checkout passou a aplicar a reserva do estoque dentro da mesma transação.
 
-O item 6 também é necessário antes da publicação, porque logs de debug podem expor dados sensíveis no console de produção.
+O item 6 ainda é necessário antes da publicação, porque logs de debug podem expor dados sensíveis no console de produção.
 
 ### Recomendados Para Um Projeto Apresentável
 
@@ -485,4 +476,4 @@ Itens 14, 16 e 17. São melhorias de organização, acabamento e escopo extra. O
 
 ## Próximo Passo Sugerido
 
-O próximo passo ativo é o item 5: revisar a transação de estoque e validar o fluxo de checkout antes de qualquer integração de pagamento. O Stripe ficou como etapa futura e opcional, e não deve bloquear a finalização do checkup.
+O próximo passo ativo é continuar com os itens de revisão do backend e documentação: Swagger, validações, README, testes e limpeza final de mensagens e nomes. O Stripe segue como etapa futura e opcional, e não deve bloquear a finalização do checkup.

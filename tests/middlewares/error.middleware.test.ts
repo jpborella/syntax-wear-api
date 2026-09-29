@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { FastifyReply, FastifyRequest, FastifyError } from 'fastify';
 import { errorHandler } from '../../src/middlewares/error.middleware';
+import { UnauthorizedError } from '../../src/types';
 import { ZodError } from 'zod';
 
 describe('Error Middleware', () => {
@@ -199,6 +200,22 @@ describe('Error Middleware', () => {
             // Act
             errorHandler(
                 error,
+                mockRequest as FastifyRequest,
+                mockReply as FastifyReply
+            );
+
+            // Assert
+            expect(mockReply.status).toHaveBeenCalledWith(401);
+            expect(sendedResponse.message).toBe('Credenciais inválidas.');
+        });
+
+        it('deve tratar erros de autenticação pelo tipo e não pelo texto exato', () => {
+            // Arrange
+            const error = new UnauthorizedError('Usuário não encontrado');
+
+            // Act
+            errorHandler(
+                error as any,
                 mockRequest as FastifyRequest,
                 mockReply as FastifyReply
             );

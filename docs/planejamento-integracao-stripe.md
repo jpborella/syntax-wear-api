@@ -65,6 +65,6 @@ O fluxo esperado é:
 - Variáveis de ambiente: concluído.
 - Cookies de autenticação: concluído.
 - Google Login: concluído no código; configuração do domínio de produção pendente.
-- Transação de estoque: pendente.
+- Transação de estoque: concluída e validada no backend.
 - Checkup do projeto: etapa ativa.
 - Integração Stripe: adiada, opcional e planejada para uma fase posterior.
