@@ -320,9 +320,9 @@ O documento de hardening declara várias etapas como concluídas, mas o código 
 
 ---
 
-### 15. [RECOMENDADO] Criar um README profissional
+### 15. [CONCLUÍDO] Criar um README profissional
 
-O README deve explicar:
+O README foi atualizado para explicar:
 
 - objetivo do projeto;
 - tecnologias usadas;
@@ -332,11 +332,10 @@ O README deve explicar:
 - variáveis de ambiente;
 - execução local;
 - testes;
-- migrations;
-- URL de demonstração;
-- limitações da versão publicada.
+- scripts principais;
+- status da aplicação e limitações da versão atual.
 
-Também vale informar claramente que o frontend e o backend são aplicações separadas.
+Também ficou explícito que o frontend e o backend são aplicações separadas e devem ser executados de forma independente.
 
 **Por que importa:** o README é frequentemente a primeira parte do GitHub lida pelo recrutador.
 
