@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '../utils/prisma';
 import { CreateProduct, ProductFilters, UpdateProduct, NotFoundError } from '../types';
 
@@ -23,12 +24,12 @@ export const getProducts = async (filter: ProductFilters) => {
         limit = 10,
         gender,
         isOutlet
-    } = filter as any;
+    } = filter;
 
-    const where: any = { active: true };
+    const where: Prisma.ProductWhereInput = { active: true };
 
     if (categoryId !== undefined) {
-        where.categoryId = Number(categoryId);
+        where.categoryId = categoryId;
     }
 
     // Filtro por gênero (se informado)
@@ -38,17 +39,17 @@ export const getProducts = async (filter: ProductFilters) => {
 
     // Filtro por outlet
     if (isOutlet !== undefined) {
-        where.isOutlet = Boolean(isOutlet);
+        where.isOutlet = isOutlet;
     }
 
     // Filtro por preço
     if (minPrice !== undefined || maxPrice !== undefined) {
         where.price = {};
         if (minPrice !== undefined) {
-            where.price.gte = Number(minPrice);
+            where.price.gte = minPrice;
         }
         if (maxPrice !== undefined) {
-            where.price.lte = Number(maxPrice);
+            where.price.lte = maxPrice;
         }
     }
 
@@ -75,17 +76,16 @@ export const getProducts = async (filter: ProductFilters) => {
     const take = Number(limit);
 
     // Ordenação
-    const orderBy: any = {};
-    if (sortBy) {
-        orderBy[sortBy] = sortOrder || 'asc';
-    }
+    const orderBy: Prisma.ProductOrderByWithRelationInput | undefined = sortBy
+        ? { [sortBy]: sortOrder || 'asc' }
+        : undefined;
 
     try {
         // Buscar produtos com filtros (payload reduzido para listagem)
         const [products, total] = await Promise.all([
             prisma.product.findMany({
                 where,
-                orderBy: Object.keys(orderBy).length > 0 ? orderBy : undefined,
+                orderBy,
                 skip,
                 take,
                 select: {

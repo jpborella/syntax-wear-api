@@ -135,24 +135,18 @@ Para produção, ainda é necessário configurar no Google Cloud o domínio `htt
 
 ---
 
-### 5. [RECOMENDADO] Remover `any` dos serviços do backend
+### 5. [CONCLUÍDO] Remover `any` dos serviços do backend
 
 **Arquivo:** `syntax-wear-api/src/services/product.services.ts`
 
-Existem trechos como:
+O serviço de produtos foi tipado com os tipos gerados pelo Prisma:
 
 ```ts
-const where: any = {};
-const orderBy: any = {};
+const where: Prisma.ProductWhereInput = { active: true };
+const orderBy: Prisma.ProductOrderByWithRelationInput | undefined = ...;
 ```
 
-O ideal é usar os tipos do Prisma:
-
-```ts
-const where: Prisma.ProductWhereInput = {
-    active: true,
-};
-```
+Além disso, o serviço deixou de usar `filter as any` e passou a preservar os tipos dos filtros, preços e ordenação.
 
 **Por que importa:** reduz erros silenciosos e mostra uso real do TypeScript.
 
@@ -420,10 +414,10 @@ Depois das correções funcionais:
 3. Cookies de autenticação (concluído).
 4. Google Login (concluído).
 5. Revisão da transação de estoque e checkout (concluído).
-6. Remoção de logs de debug.
-7. Tratamento de erros.
-8. Swagger e validações.
-9. Remoção de `any` e tipagem do `useSearch`.
+6. Remoção de logs de debug (concluído).
+7. Tratamento de erros (concluído).
+8. Swagger e validações (concluído).
+9. Remoção de `any` nos serviços do backend (concluído).
 10. Testes de pedidos, carrinho e autorização.
 11. README e documentação antiga.
 12. Lint e comando de verificação.
@@ -442,7 +436,7 @@ O item 6 ainda é necessário antes da publicação, porque logs de debug podem 
 
 ### Recomendados Para Um Projeto Apresentável
 
-Itens 7 a 12, 13 e 15, além do item 18. Eles não necessariamente impedem o site de abrir, mas elevam a qualidade técnica, a segurança e a facilidade de avaliação.
+Os próximos itens recomendados são tipar o `useSearch`, ampliar testes, revisar a documentação antiga e padronizar mensagens. Eles não necessariamente impedem o site de abrir, mas elevam a qualidade técnica, a segurança e a facilidade de avaliação.
 
 ### Opcionais Para Uma Segunda Etapa
 
@@ -466,4 +460,4 @@ Itens 14, 16 e 17. São melhorias de organização, acabamento e escopo extra. O
 
 ## Próximo Passo Sugerido
 
-O próximo passo ativo é continuar com os itens de revisão do backend e documentação: Swagger, validações, README, testes e limpeza final de mensagens e nomes. O Stripe segue como etapa futura e opcional, e não deve bloquear a finalização do checkup.
+O próximo passo ativo é tipar o `useSearch` do frontend e, em seguida, ampliar os testes de pedidos, autorização e integração. O Stripe segue como etapa futura e opcional, e não deve bloquear a finalização do checkup.
