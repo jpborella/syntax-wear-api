@@ -154,17 +154,13 @@ Além disso, o serviço deixou de usar `filter as any` e passou a preservar os t
 
 ---
 
-### 6. [RECOMENDADO] Tipar o `useSearch` do frontend
+### 6. [CONCLUÍDO] Tipar o `useSearch` do frontend
 
 **Arquivo:** `syntax-wear-shop-online/src/pages/_app/products/category/$category.tsx`
 
-Atualmente a rota usa:
+O schema `validateSearch` agora valida `gender` como um dos valores aceitos pela API (`MASCULINO`, `FEMININO` ou `UNISSEX`). O TanStack Router infere o tipo da busca e o `any` foi removido.
 
-```ts
-const search: any = Route.useSearch();
-```
-
-O ideal é definir o schema de busca da rota e permitir que o TanStack Router infira o tipo. Assim, `gender` terá um tipo conhecido e não dependerá de `any`.
+O build do frontend passou após a alteração.
 
 **Por que importa:** melhora a legibilidade e evita erros de digitação nos filtros.
 
@@ -276,6 +272,8 @@ Essa correção deixa o console mais limpo e evita expor informações sensívei
 
 ### 13. [RECOMENDADO] Ampliar os testes do backend
 
+**Progresso:** foi adicionado um teste de regressão para garantir que o pedido não seja criado quando a reserva condicional de estoque falha dentro da transação. A ampliação da cobertura continua pendente para os demais fluxos listados abaixo.
+
 Os testes atuais cobrem principalmente autenticação e utilitários. É importante aumentar a cobertura de:
 
 - produtos;
@@ -305,7 +303,7 @@ Alguns testes também usam muitos casts, como `as FastifyRequest`. Os mocks pode
 
 O PRD menciona recursos que podem não estar completos, como newsletter, upload para Supabase Storage e cálculo de frete.
 
-O documento de hardening declara várias etapas como concluídas, mas o código ainda mantém divergências, como CORS amplo e schemas parcialmente desatualizados.
+O documento de hardening declara várias etapas como concluídas e ainda precisa ser conferido contra o estado atual do código. As divergências de CORS e schemas citadas em versões anteriores deste checkup já foram corrigidas e não devem continuar como pendências.
 
 **Melhoria:** documentar apenas o que existe ou marcar claramente o que está planejado.
 
@@ -418,7 +416,7 @@ Depois das correções funcionais:
 7. Tratamento de erros (concluído).
 8. Swagger e validações (concluído).
 9. Remoção de `any` nos serviços do backend (concluído).
-10. Testes de pedidos, carrinho e autorização.
+10. Testes de pedidos, carrinho e autorização (em andamento: regressão da reserva transacional de estoque).
 11. README e documentação antiga.
 12. Lint e comando de verificação.
 13. Estratégia do carrinho.
@@ -430,13 +428,11 @@ Depois das correções funcionais:
 
 ### Necessários Antes De Mostrar O Site
 
-A revisão da transação de estoque foi concluída, e o fluxo de checkout passou a aplicar a reserva do estoque dentro da mesma transação.
-
-O item 6 ainda é necessário antes da publicação, porque logs de debug podem expor dados sensíveis no console de produção.
+A revisão da transação de estoque foi concluída, e o fluxo de checkout passou a aplicar a reserva do estoque dentro da mesma transação. Antes da publicação, confirme também a configuração do domínio de produção no Google Cloud para o login, conforme o item 4.
 
 ### Recomendados Para Um Projeto Apresentável
 
-Os próximos itens recomendados são tipar o `useSearch`, ampliar testes, revisar a documentação antiga e padronizar mensagens. Eles não necessariamente impedem o site de abrir, mas elevam a qualidade técnica, a segurança e a facilidade de avaliação.
+Os próximos itens recomendados são ampliar testes, revisar a documentação antiga e padronizar mensagens. A tipagem do `useSearch` foi concluída. Esses itens não necessariamente impedem o site de abrir, mas elevam a qualidade técnica, a segurança e a facilidade de avaliação.
 
 ### Opcionais Para Uma Segunda Etapa
 
@@ -460,4 +456,4 @@ Itens 14, 16 e 17. São melhorias de organização, acabamento e escopo extra. O
 
 ## Próximo Passo Sugerido
 
-O próximo passo ativo é tipar o `useSearch` do frontend e, em seguida, ampliar os testes de pedidos, autorização e integração. O Stripe segue como etapa futura e opcional, e não deve bloquear a finalização do checkup.
+O próximo passo ativo é ampliar os testes de pedidos, autorização e integração; a primeira regressão cobre a falha de reserva de estoque concorrente. O Stripe segue como etapa futura e opcional, e não deve bloquear a finalização do checkup.

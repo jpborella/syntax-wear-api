@@ -359,6 +359,35 @@ describe('Order Services', () => {
                 'Estoque insuficiente para o produto selecionado.'
             );
         });
+
+        it('não deve criar pedido se o estoque acabar antes da reserva transacional', async () => {
+            const createPayload: CreateOrder = {
+                items: [{ productId: 1, quantity: 2 }],
+                paymentMethod: 'CARD',
+                shippingAddress: mockShippingAddress,
+            };
+            const updateMany = vi.fn().mockResolvedValueOnce({ count: 0 });
+            const create = vi.fn();
+
+            (prisma.product.findMany as any).mockResolvedValueOnce([mockProduct]);
+            (prisma.$transaction as any).mockImplementationOnce(async (callback) =>
+                callback({
+                    product: { updateMany },
+                    order: { create },
+                })
+            );
+
+            await expect(createOrder(createPayload, mockAuthUser.id)).rejects.toThrow(
+                'Estoque insuficiente para o produto selecionado.'
+            );
+
+            expect(updateMany).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    where: { id: 1, stock: { gte: 2 } },
+                })
+            );
+            expect(create).not.toHaveBeenCalled();
+        });
     });
 
     describe('updateOrderStatus', () => {
