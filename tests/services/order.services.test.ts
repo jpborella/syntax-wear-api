@@ -20,11 +20,6 @@ vi.mock('../../src/utils/prisma', () => ({
     },
 }));
 
-// Mock da função validateOwnership
-vi.mock('../../src/utils/auth.utils', () => ({
-    validateOwnership: vi.fn(),
-}));
-
 // Importar depois dos mocks
 import {
     listOrders,
@@ -196,6 +191,27 @@ describe('Order Services', () => {
 
             // Act & Assert
             await expect(getOrderById(999, mockAuthUser)).rejects.toThrow(NotFoundError);
+        });
+
+        it('deve bloquear acesso a pedido de outro usuário', async () => {
+            // Arrange
+            const otherUserOrder = { ...mockOrder, userId: 999 };
+            (prisma.order.findUnique as any).mockResolvedValueOnce(otherUserOrder);
+
+            // Act & Assert
+            await expect(getOrderById(1, mockAuthUser)).rejects.toThrow('Você não tem permissão para acessar este recurso.');
+        });
+
+        it('deve permitir que admin veja pedido de outro usuário', async () => {
+            // Arrange
+            const otherUserOrder = { ...mockOrder, userId: 999 };
+            (prisma.order.findUnique as any).mockResolvedValueOnce(otherUserOrder);
+
+            // Act
+            const result = await getOrderById(1, mockAdminUser);
+
+            // Assert
+            expect(result).toEqual(otherUserOrder);
         });
 
         it('deve incluir items e products ao buscar', async () => {
@@ -528,6 +544,23 @@ describe('Order Services', () => {
 
             // Act & Assert
             await expect(deleteOrder(1, mockAuthUser)).rejects.toThrow();
+        });
+
+        it('deve permitir que admin cancele pedido de outro usuário', async () => {
+            // Arrange
+            const otherUserOrder = { ...mockOrder, userId: 999 };
+            (prisma.order.findUnique as any).mockResolvedValueOnce(otherUserOrder);
+            (prisma.product.findMany as any).mockResolvedValueOnce([mockProduct]);
+            (prisma.$transaction as any).mockResolvedValueOnce({
+                ...otherUserOrder,
+                status: 'CANCELLED' as const,
+            });
+
+            // Act
+            await expect(deleteOrder(1, mockAdminUser)).resolves.toBeUndefined();
+
+            // Assert
+            expect(prisma.$transaction).toHaveBeenCalled();
         });
 
         it('deve mudar status para CANCELLED', async () => {
