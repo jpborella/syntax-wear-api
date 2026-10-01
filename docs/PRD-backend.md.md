@@ -1,10 +1,12 @@
 # PRD — API Backend para Syntax Wear
 
-Última atualização: 25 de novembro de 2025.
+Última atualização: 1 de outubro de 2026.
 
 ## Objetivo
 
-Construir uma API REST em Node.js + Fastify + TypeScript que suporte o front-end existente do projeto `syntax-wear-app`. A API deverá gerenciar catálogo (produtos e categorias), autenticação, pedidos (checkout), cálculo de frete por CEP, gerenciamento de assinaturas/newsletter e armazenamento de imagens em Supabase Storage. Persistência via Supabase Postgres acessada por Prisma. Autenticação via JWT.
+Construir e manter uma API REST em Node.js + Fastify + TypeScript para apoiar o front-end do projeto `syntax-wear-shop-online`. A API atual gerencia catálogo de produtos e categorias, autenticação e autorização, pedidos, estoque, validação de dados e integração com o fluxo de checkout e login do e-commerce.
+
+> Observação de alinhamento: este documento foi atualizado para refletir a implementação atual do projeto. Alguns itens do planejamento inicial foram ajustados para o escopo real, e a configuração do Google Login em produção foi validada no ambiente real, não sendo mais tratada como pendência ativa de código.
 
 ## Escopo do MVP
 

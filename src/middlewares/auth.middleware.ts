@@ -13,7 +13,7 @@ export const authenticate = async (
         const payload = await request.jwtVerify<JwtPayload>();
 
         if (!payload.userId) {
-            reply.status(401).send({ error: "Token invalido ou expirado." });
+            reply.status(401).send({ error: "Token inválido ou expirado." });
             return;
         }
 
@@ -23,13 +23,13 @@ export const authenticate = async (
         });
 
         if (!user) {
-            reply.status(401).send({ error: "Token invalido ou expirado." });
+            reply.status(401).send({ error: "Token inválido ou expirado." });
             return;
         }
 
         request.authUser = user;
     } catch (err) {
-        reply.status(401).send({ error: "Token invalido ou expirado." });
+        reply.status(401).send({ error: "Token inválido ou expirado." });
         return;
     }
 };

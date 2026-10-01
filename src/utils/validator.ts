@@ -77,83 +77,83 @@ export const deleteProductSchema = z.object({
 });
 
 export const createCategorySchema = z.object({
-    name: z.string().trim().min(2, "O nome e obrigatorio."),
+    name: z.string().trim().min(2, "O nome é obrigatório."),
     description: z
         .string()
         .trim()
-        .min(2, "A descricao deve ter pelo menos 2 caracteres.")
+        .min(2, "A descrição deve ter pelo menos 2 caracteres.")
         .optional(),
-    slug: z.string().trim().min(2, "O slug e obrigatorio."),
+    slug: z.string().trim().min(2, "O slug é obrigatório."),
     active: z.boolean(),
 });
 
 export const updateCategorySchema = z.object({
-    name: z.string().trim().min(2, "Nome e obrigatorio.").optional(),
+    name: z.string().trim().min(2, "Nome é obrigatório.").optional(),
     description: z
         .string()
         .trim()
-        .min(2, "Descricao deve ter pelo menos 2 caracteres.")
+        .min(2, "Descrição deve ter pelo menos 2 caracteres.")
         .optional(),
-    slug: z.string().trim().min(2, "Slug e obrigatorio.").optional(),
+    slug: z.string().trim().min(2, "Slug é obrigatório.").optional(),
     active: z.boolean().optional(),
 });
 
 export const categoryIdSchema = z.object({
-    id: z.coerce.number().int().positive("ID invalido."),
+    id: z.coerce.number().int().positive("ID inválido."),
 });
 
 export const productIdSchema = z.object({
-    id: z.coerce.number().int().positive("ID invalido."),
+    id: z.coerce.number().int().positive("ID inválido."),
 });
 
 export const orderFiltersSchema = z.object({
-    page: z.coerce.number().int().positive("Pagina deve ser um numero positivo.").optional().default(1),
-    limit: z.coerce.number().int().positive("Limite deve ser um numero positivo.").max(50, "Limite maximo e 50.").optional().default(10),
+    page: z.coerce.number().int().positive("Página deve ser um número positivo.").optional().default(1),
+    limit: z.coerce.number().int().positive("Limite deve ser um número positivo.").max(50, "Limite máximo é 50.").optional().default(10),
     status: z
         .enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"], {
-            message: "Status invalido.",
+            message: "Status inválido.",
         })
         .optional(),
-    userId: z.coerce.number().int().positive("Usuario invalido.").optional(),
+    userId: z.coerce.number().int().positive("Usuário inválido.").optional(),
 });
 
 export const orderIdSchema = z.object({
-    id: z.coerce.number().int().positive("ID invalido."),
+    id: z.coerce.number().int().positive("ID inválido."),
 });
 
 export const orderItemSchema = z.object({
-    productId: z.coerce.number().int().positive("Produto invalido."),
+    productId: z.coerce.number().int().positive("Produto inválido."),
     quantity: z.coerce.number().int().positive("Quantidade deve ser maior que zero."),
 });
 
 export const cartItemSchema = z.object({
-    productId: z.coerce.number().int().positive("Produto invalido."),
+    productId: z.coerce.number().int().positive("Produto inválido."),
     quantity: z.coerce.number().int().positive("Quantidade deve ser maior que zero."),
 });
 
 export const shippingAddressSchema = z.object({
-    cep: z.string().trim().min(8, "CEP invalido."),
-    street: z.string().trim().min(2, "Rua e obrigatoria."),
-    number: z.string().trim().min(1, "Numero e obrigatorio."),
+    cep: z.string().trim().min(8, "CEP inválido."),
+    street: z.string().trim().min(2, "Rua é obrigatória."),
+    number: z.string().trim().min(1, "Número é obrigatório."),
     complement: z.string().trim().optional(),
-    neighborhood: z.string().trim().min(2, "Bairro e obrigatorio."),
-    city: z.string().trim().min(2, "Cidade e obrigatoria."),
-    state: z.string().trim().min(2, "Estado e obrigatorio."),
-    country: z.string().trim().min(2, "Pais e obrigatorio."),
+    neighborhood: z.string().trim().min(2, "Bairro é obrigatório."),
+    city: z.string().trim().min(2, "Cidade é obrigatória."),
+    state: z.string().trim().min(2, "Estado é obrigatório."),
+    country: z.string().trim().min(2, "País é obrigatório."),
 });
 
 export const createOrderSchema = z.object({
-    userId: z.coerce.number().int().positive("Usuario invalido.").optional(),
+    userId: z.coerce.number().int().positive("Usuário inválido.").optional(),
     paymentMethod: z.enum(["PIX", "CARD", "BOLETO"], {
-        message: "Metodo de pagamento invalido.",
+        message: "Método de pagamento inválido.",
     }),
     shippingAddress: shippingAddressSchema,
-    items: z.array(orderItemSchema).min(1, "Itens do pedido sao obrigatorios."),
+    items: z.array(orderItemSchema).min(1, "Itens do pedido são obrigatórios."),
 });
 
 export const updateOrderSchema = z.object({
     status: z.enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"], {
-        message: "Status invalido.",
+        message: "Status inválido.",
     }),
 });
 

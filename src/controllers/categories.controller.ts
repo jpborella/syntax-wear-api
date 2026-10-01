@@ -16,7 +16,7 @@ import {
 
 const ensureAdmin = (request: FastifyRequest, reply: FastifyReply) => {
     if (!request.authUser) {
-        reply.status(401).send({ error: "Nao autenticado." });
+        reply.status(401).send({ error: "Não autenticado." });
         return false;
     }
 

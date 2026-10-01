@@ -19,22 +19,22 @@ Essa revisão considera que o Stripe é uma etapa futura e opcional, e não uma 
 
 ### Pendentes — em ordem de importância
 
-1. **[PENDENTE] Confirmar a configuração do Google Login em produção.** Cadastrar o domínio no Google Cloud e conferir os Client IDs das variáveis do frontend e do backend. É uma pendência externa necessária antes da publicação.
-2. **[PENDENTE] Documentar a estratégia do carrinho.** Definir o que acontece com itens locais quando o usuário entra em uma conta que já tem carrinho remoto.
-3. **[PENDENTE] Atualizar a documentação antiga do backend.** Conferir o PRD e o planejamento de hardening contra o código atual.
-4. **[PENDENTE] Padronizar mensagens e idioma.** Corrigir inconsistências de português e acentuação.
-5. **[PENDENTE] Avaliar melhorias opcionais de organização.** Centralizar configurações e padronizar nomes e formatação, sem misturar com correções funcionais.
+1. **[PENDENTE] Padronizar mensagens e idioma.** Corrigir inconsistências de português, acentuação e clareza das respostas da API e do frontend.
+2. **[PENDENTE] Avaliar melhorias opcionais de organização.** Centralizar configurações e padronizar nomes e formatação, sem misturar com correções funcionais.
 
 ### Concluídas
 
 1. **[CONCLUÍDA] Corrigir o ciclo de estoque dos pedidos.** A criação reserva estoque; pagar mantém a reserva, cancelar devolve as unidades e reabrir pedido cancelado reserva novamente.
-2. **[CONCLUÍDA] Revisar lacunas de testes de pedidos e autorização.** Os acessos de usuários e administradores foram validados com testes reais, e a simulação do `validateOwnership` foi removida para evitar falsos positivos.
-3. **[CONCLUÍDA] Concluir as correções de CORS, cookies, variáveis de ambiente e Google Login no código.** A configuração externa do Google Login em produção permanece pendente, conforme a fila acima.
-4. **[CONCLUÍDA] Tipar o `useSearch` do frontend.**
-5. **[CONCLUÍDA] Padronizar validação e Swagger.**
-6. **[CONCLUÍDA] Melhorar o tratamento de erros.**
-7. **[CONCLUÍDA] Remover `any` dos serviços do backend e logs de debug.**
-8. **[CONCLUÍDA] Criar o README profissional e o comando de verificação do backend.**
+2. **[CONCLUÍDA] Revisar lacunas de testes de pedidos e autorização.** Os acessos de usuários e administradores foram validados com testes reais, e a simulação do `validateOwnership` foi removida para evitar falsos positivos e garantir a regra real do sistema.
+3. **[CONCLUÍDA] Documentar a estratégia do carrinho.** O carrinho do visitante e o carrinho autenticado agora são mesclados ao entrar na conta, somando quantidades de itens repetidos em vez de sobrescrever o conteúdo local.
+4. **[CONCLUÍDA] Configurar e validar o Google Login em produção.** A configuração foi confirmada no ambiente real e não deve continuar como pendência ativa de código.
+5. **[CONCLUÍDA] Concluir as correções de CORS, cookies, variáveis de ambiente e Google Login no código.**
+6. **[CONCLUÍDA] Tipar o `useSearch` do frontend.**
+7. **[CONCLUÍDA] Padronizar validação e Swagger.**
+8. **[CONCLUÍDA] Melhorar o tratamento de erros.**
+9. **[CONCLUÍDA] Remover `any` dos serviços do backend e logs de debug.**
+10. **[CONCLUÍDA] Criar o README profissional e o comando de verificação do backend.**
+11. **[CONCLUÍDA] Atualizar a documentação do backend para refletir o código atual.** A revisão do PRD e do hardening foi alinhada com as rotas, autenticação, autorização, estoque e estado real da aplicação.
 
 O Stripe continua fora do escopo desta etapa. O registro detalhado abaixo documenta os itens e suas justificativas; a fila acima define a ordem atual de execução.
 

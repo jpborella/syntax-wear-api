@@ -8,7 +8,7 @@ export const listOrdersHandler = async (
     reply: FastifyReply
 ) => {
     if (!request.authUser) {
-        reply.status(401).send({ error: "Nao autenticado." });
+        reply.status(401).send({ error: "Não autenticado." });
         return;
     }
 
@@ -22,7 +22,7 @@ export const getOrderHandler = async (
     reply: FastifyReply
 ) => {
     if (!request.authUser) {
-        reply.status(401).send({ error: "Nao autenticado." });
+        reply.status(401).send({ error: "Não autenticado." });
         return;
     }
 
@@ -36,7 +36,7 @@ export const createOrderHandler = async (
     reply: FastifyReply
 ) => {
     if (!request.authUser) {
-        reply.status(401).send({ error: "Nao autenticado." });
+        reply.status(401).send({ error: "Não autenticado." });
         return;
     }
 
@@ -50,7 +50,7 @@ export const updateOrderHandler = async (
     reply: FastifyReply
 ) => {
     if (!request.authUser) {
-        reply.status(401).send({ error: "Nao autenticado." });
+        reply.status(401).send({ error: "Não autenticado." });
         return;
     }
 
@@ -65,7 +65,7 @@ export const deleteOrderHandler = async (
     reply: FastifyReply
 ) => {
     if (!request.authUser) {
-        reply.status(401).send({ error: "Nao autenticado." });
+        reply.status(401).send({ error: "Não autenticado." });
         return;
     }
 
