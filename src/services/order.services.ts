@@ -43,14 +43,17 @@ const applyOrderStatus = async (
     }
 
     const productIds = Array.from(quantityByProductId.keys());
+    const shouldDecrement = order.status === "CANCELLED" && status !== "CANCELLED";
+    const shouldIncrement = status === "CANCELLED" && order.status !== "CANCELLED";
+
     const products = await prisma.product.findMany({
         where: {
             id: { in: productIds },
-            active: true,
         },
         select: {
             id: true,
             stock: true,
+            active: true,
         },
     });
 
@@ -60,14 +63,11 @@ const applyOrderStatus = async (
 
     const productMap = new Map(products.map((product) => [product.id, product]));
 
-    const shouldDecrement = status === "PAID" && order.status !== "PAID";
-    const shouldIncrement = status === "CANCELLED" && order.status === "PAID";
-
     if (shouldDecrement) {
         for (const [productId, quantity] of quantityByProductId.entries()) {
             const product = productMap.get(productId);
 
-            if (!product) {
+            if (!product || !product.active) {
                 throw new Error("Produto nao encontrado ou inativo.");
             }
 
@@ -83,6 +83,7 @@ const applyOrderStatus = async (
                 const updated = await tx.product.updateMany({
                     where: {
                         id: productId,
+                        active: true,
                         stock: { gte: quantity },
                     },
                     data: {

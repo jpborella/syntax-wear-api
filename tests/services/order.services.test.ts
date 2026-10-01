@@ -402,15 +402,51 @@ describe('Order Services', () => {
         it('admin deve atualizar status do pedido', async () => {
             // Arrange
             const updatedOrder = { ...mockOrder, status: 'PAID' as const };
+            const tx = {
+                product: {
+                    updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+                    update: vi.fn(),
+                },
+                order: {
+                    update: vi.fn().mockResolvedValue(updatedOrder),
+                },
+            };
             (prisma.order.findUnique as any).mockResolvedValueOnce(mockOrder);
             (prisma.product.findMany as any).mockResolvedValueOnce([mockProduct]);
-            (prisma.$transaction as any).mockResolvedValueOnce(updatedOrder);
+            (prisma.$transaction as any).mockImplementationOnce(async (callback) => callback(tx));
 
             // Act
             const result = await updateOrderStatus(1, 'PAID', mockAdminUser);
 
             // Assert
             expect(result).toEqual(updatedOrder);
+            expect(tx.product.updateMany).not.toHaveBeenCalled();
+            expect(tx.product.update).not.toHaveBeenCalled();
+        });
+
+        it('deve reservar o estoque novamente ao reabrir um pedido cancelado', async () => {
+            const cancelledOrder = { ...mockOrder, status: 'CANCELLED' as const };
+            const reopenedOrder = { ...mockOrder, status: 'PAID' as const };
+            const tx = {
+                product: {
+                    updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+                    update: vi.fn(),
+                },
+                order: {
+                    update: vi.fn().mockResolvedValue(reopenedOrder),
+                },
+            };
+            (prisma.order.findUnique as any).mockResolvedValueOnce(cancelledOrder);
+            (prisma.product.findMany as any).mockResolvedValueOnce([mockProduct]);
+            (prisma.$transaction as any).mockImplementationOnce(async (callback) => callback(tx));
+
+            await updateOrderStatus(1, 'PAID', mockAdminUser);
+
+            expect(tx.product.updateMany).toHaveBeenCalledWith({
+                where: { id: 1, active: true, stock: { gte: 2 } },
+                data: { stock: { decrement: 2 } },
+            });
+            expect(tx.product.update).not.toHaveBeenCalled();
         });
 
         it('deve lançar erro se pedido não encontrado', async () => {
@@ -438,6 +474,29 @@ describe('Order Services', () => {
     });
 
     describe('deleteOrder', () => {
+        it('deve devolver ao estoque os itens de um pedido pendente cancelado', async () => {
+            const tx = {
+                product: {
+                    update: vi.fn(),
+                    updateMany: vi.fn(),
+                },
+                order: {
+                    update: vi.fn().mockResolvedValue({ ...mockOrder, status: 'CANCELLED' as const }),
+                },
+            };
+            (prisma.order.findUnique as any).mockResolvedValueOnce(mockOrder);
+            (prisma.product.findMany as any).mockResolvedValueOnce([mockProduct]);
+            (prisma.$transaction as any).mockImplementationOnce(async (callback) => callback(tx));
+
+            await deleteOrder(1, mockAuthUser);
+
+            expect(tx.product.update).toHaveBeenCalledWith({
+                where: { id: 1 },
+                data: { stock: { increment: 2 } },
+            });
+            expect(tx.product.updateMany).not.toHaveBeenCalled();
+        });
+
         it('deve cancelar pedido com sucesso', async () => {
             // Arrange
             (prisma.order.findUnique as any).mockResolvedValueOnce(mockOrder);

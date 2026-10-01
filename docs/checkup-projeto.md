@@ -4,11 +4,10 @@ Documento de revisão para organizar melhorias no frontend e no backend antes da
 
 A ordem abaixo considera impacto, risco, clareza para um desenvolvedor júnior e esforço de implementação.
 
-## Como Ler as Prioridades
+## Como Ler os Status
 
-- **AVISO — NECESSÁRIO:** deve ser resolvido antes de apresentar a aplicação em produção ou antes de considerar o fluxo concluído.
-- **AVISO — RECOMENDADO:** não impede a demonstração, mas melhora segurança, qualidade ou confiança do recrutador.
-- **AVISO — OPCIONAL:** melhoria de organização ou acabamento que pode ficar para depois das correções funcionais.
+- **CONCLUÍDO:** tarefa finalizada.
+- **PENDENTE:** tarefa ainda não realizada; a fila de pendências está ordenada por importância.
 
 ## Situação Atual
 
@@ -16,7 +15,30 @@ A prioridade atual do projeto não inclui a integração do Stripe. A decisão f
 
 Essa revisão considera que o Stripe é uma etapa futura e opcional, e não uma dependência para a apresentação do projeto neste momento.
 
-## Ordem Recomendada
+## Fila Atual de Execução
+
+### Pendentes — em ordem de importância
+
+1. **[PENDENTE] Confirmar a configuração do Google Login em produção.** Cadastrar o domínio no Google Cloud e conferir os Client IDs das variáveis do frontend e do backend. É uma pendência externa necessária antes da publicação.
+2. **[PENDENTE] Revisar lacunas de testes de pedidos e autorização.** Verificar os acessos de usuários e administradores e adicionar testes somente onde houver lacunas reais, sem duplicar a cobertura existente.
+3. **[PENDENTE] Documentar a estratégia do carrinho.** Definir o que acontece com itens locais quando o usuário entra em uma conta que já tem carrinho remoto.
+4. **[PENDENTE] Atualizar a documentação antiga do backend.** Conferir o PRD e o planejamento de hardening contra o código atual.
+5. **[PENDENTE] Padronizar mensagens e idioma.** Corrigir inconsistências de português e acentuação.
+6. **[PENDENTE] Avaliar melhorias opcionais de organização.** Centralizar configurações e padronizar nomes e formatação, sem misturar com correções funcionais.
+
+### Concluídas
+
+1. **[CONCLUÍDA] Corrigir o ciclo de estoque dos pedidos.** A criação reserva estoque; pagar mantém a reserva, cancelar devolve as unidades e reabrir pedido cancelado reserva novamente.
+2. **[CONCLUÍDA] Concluir as correções de CORS, cookies, variáveis de ambiente e Google Login no código.** A configuração externa do Google Login em produção permanece pendente, conforme a fila acima.
+3. **[CONCLUÍDA] Tipar o `useSearch` do frontend.**
+4. **[CONCLUÍDA] Padronizar validação e Swagger.**
+5. **[CONCLUÍDA] Melhorar o tratamento de erros.**
+6. **[CONCLUÍDA] Remover `any` dos serviços do backend e logs de debug.**
+7. **[CONCLUÍDA] Criar o README profissional e o comando de verificação do backend.**
+
+O Stripe continua fora do escopo desta etapa. O registro detalhado abaixo documenta os itens e suas justificativas; a fila acima define a ordem atual de execução.
+
+## Registro Detalhado dos Itens
 
 ### 1. [CONCLUÍDO] Corrigir CORS em produção
 
@@ -205,7 +227,7 @@ Isso reduz o risco de que uma pequena mudança no texto do erro altere indevidam
 
 ---
 
-### 9. [RECOMENDADO] Padronizar mensagens e idioma
+### 9. [PENDENTE] Padronizar mensagens e idioma
 
 Há mensagens com e sem acentuação, por exemplo:
 
@@ -222,15 +244,15 @@ Também existem descrições e comentários em português e inglês misturados.
 
 ---
 
-### 10. [CONCLUÍDO] Revisar a transação de estoque
+### 10. [CONCLUÍDO] Revisar o ciclo de estoque dos pedidos
 
 **Arquivo:** `syntax-wear-api/src/services/order.services.ts`
 
-A regra foi revisada para garantir que a verificação e a atualização do estoque ocorram dentro da mesma transação, de forma atômica.
+A criação do pedido reserva o estoque dentro de uma transação, com atualização condicional para evitar venda acima do disponível. A transição para `PAID` mantém essa reserva, sem novo decremento. O cancelamento de qualquer pedido não cancelado devolve as unidades; reabrir um pedido cancelado tenta reservar o estoque novamente dentro da transação.
 
-A lógica atual valida os produtos e a quantidade disponível, depois executa o decremento com `tx.product.updateMany({ where: { id, stock: { gte: quantity } }, data: { stock: { decrement: quantity } } })` dentro de `prisma.$transaction(...)`.
+Testes de regressão cobrem a ausência de baixa duplicada ao pagar, a devolução no cancelamento de pedido pendente e a nova reserva ao reabrir um pedido cancelado.
 
-Isso evita que duas requisições concorrentes passem pela validação e vendam um total maior do que o estoque disponível.
+**Por que importa:** evita tanto a baixa duplicada quanto estoque reservado permanentemente após cancelamento, preservando as operações atômicas.
 
 **Por que importa:** é uma regra de negócio crítica em e-commerce e protege o checkout real contra inconsistências.
 
@@ -238,7 +260,7 @@ Isso evita que duas requisições concorrentes passem pela validação e vendam 
 
 ---
 
-### 11. [RECOMENDADO] Documentar a estratégia do carrinho
+### 11. [PENDENTE] Documentar a estratégia do carrinho
 
 **Arquivo:** `syntax-wear-shop-online/src/contexts/CartContext/CartProvider.tsx`
 
@@ -270,23 +292,13 @@ Essa correção deixa o console mais limpo e evita expor informações sensívei
 
 ---
 
-### 13. [RECOMENDADO] Ampliar os testes do backend
+### 13. [PENDENTE] Ampliar os testes do backend
 
-**Progresso:** foi adicionado um teste de regressão para garantir que o pedido não seja criado quando a reserva condicional de estoque falha dentro da transação. A ampliação da cobertura continua pendente para os demais fluxos listados abaixo.
+**Cobertura existente:** há suítes para serviços de produtos, categorias, pedidos e autenticação, além de rotas, controllers, middlewares e utilitários. Já existe um teste de regressão para impedir a criação do pedido quando a reserva condicional de estoque falha.
 
-Os testes atuais cobrem principalmente autenticação e utilitários. É importante aumentar a cobertura de:
+**Progresso:** os efeitos no estoque ao pagar, cancelar um pedido pendente e reabrir pedido cancelado agora têm testes de regressão. A próxima revisão deve focar lacunas concretas de autorização e integração, sem duplicar os casos já cobertos.
 
-- produtos;
-- categorias;
-- carrinho;
-- pedidos;
-- autorização entre usuários;
-- permissões de administrador;
-- CORS;
-- fluxo Google;
-- middleware de erros.
-
-Alguns testes também usam muitos casts, como `as FastifyRequest`. Os mocks podem ser tipados de forma mais simples e consistente.
+O carrinho do visitante usa `localStorage` e não possui serviço backend próprio; a estratégia de transição para o carrinho autenticado está detalhada no item 11.
 
 **Por que importa:** testes de autorização, estoque e pedidos demonstram capacidade real de backend.
 
@@ -294,7 +306,7 @@ Alguns testes também usam muitos casts, como `as FastifyRequest`. Os mocks pode
 
 ---
 
-### 14. [RECOMENDADO] Atualizar a documentação antiga
+### 14. [PENDENTE] Atualizar a documentação antiga
 
 **Arquivos:**
 
@@ -336,7 +348,7 @@ Também ficou explícito que o frontend e o backend são aplicações separadas 
 
 ---
 
-### 16. [OPCIONAL] Centralizar configurações
+### 16. [PENDENTE] Centralizar configurações
 
 URLs, nome do cookie, limites de paginação, expiração do JWT e origens permitidas devem ficar em arquivos de configuração, por exemplo:
 
@@ -351,7 +363,7 @@ src/config/constants.ts
 
 ---
 
-### 17. [OPCIONAL] Padronizar nomes de arquivos
+### 17. [PENDENTE] Padronizar nomes de arquivos
 
 Existem nomes como:
 
@@ -389,7 +401,7 @@ Essa escolha foi feita para manter o escopo realista: o backend ainda não possu
 
 ---
 
-### 19. [OPCIONAL] Melhorar a consistência visual do código
+### 19. [PENDENTE] Melhorar a consistência visual do código
 
 Depois das correções funcionais:
 
@@ -404,39 +416,6 @@ Depois das correções funcionais:
 **Por que importa:** melhora a primeira impressão sem alterar comportamento.
 
 **Dificuldade:** baixa.
-
-## Ordem Prática Para Aplicar
-
-1. CORS em produção (concluído).
-2. Variáveis de ambiente (concluído).
-3. Cookies de autenticação (concluído).
-4. Google Login (concluído).
-5. Revisão da transação de estoque e checkout (concluído).
-6. Remoção de logs de debug (concluído).
-7. Tratamento de erros (concluído).
-8. Swagger e validações (concluído).
-9. Remoção de `any` nos serviços do backend (concluído).
-10. Testes de pedidos, carrinho e autorização (em andamento: regressão da reserva transacional de estoque).
-11. README e documentação antiga.
-12. Lint e comando de verificação.
-13. Estratégia do carrinho.
-14. Centralização de configurações.
-15. Padronização de nomes e formatação visual.
-16. Stripe (etapa futura e opcional, não obrigatória para a entrega atual).
-
-## Resumo Dos Avisos
-
-### Necessários Antes De Mostrar O Site
-
-A revisão da transação de estoque foi concluída, e o fluxo de checkout passou a aplicar a reserva do estoque dentro da mesma transação. Antes da publicação, confirme também a configuração do domínio de produção no Google Cloud para o login, conforme o item 4.
-
-### Recomendados Para Um Projeto Apresentável
-
-Os próximos itens recomendados são ampliar testes, revisar a documentação antiga e padronizar mensagens. A tipagem do `useSearch` foi concluída. Esses itens não necessariamente impedem o site de abrir, mas elevam a qualidade técnica, a segurança e a facilidade de avaliação.
-
-### Opcionais Para Uma Segunda Etapa
-
-Itens 14, 16 e 17. São melhorias de organização, acabamento e escopo extra. O Stripe se mantém como etapa futura, dependendo da decisão final do projeto.
 
 ## Pontos Positivos Já Existentes
 
@@ -454,6 +433,3 @@ Itens 14, 16 e 17. São melhorias de organização, acabamento e escopo extra. O
 - Soft delete de produtos e categorias.
 - Separação entre frontend e backend.
 
-## Próximo Passo Sugerido
-
-O próximo passo ativo é ampliar os testes de pedidos, autorização e integração; a primeira regressão cobre a falha de reserva de estoque concorrente. O Stripe segue como etapa futura e opcional, e não deve bloquear a finalização do checkup.
