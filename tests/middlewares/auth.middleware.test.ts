@@ -98,7 +98,7 @@ describe('Auth Middleware', () => {
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
             expect(mockReply.send).toHaveBeenCalledWith({
-                error: 'Token invalido ou expirado.',
+                error: 'Token inválido ou expirado.',
             });
         });
 
@@ -117,7 +117,7 @@ describe('Auth Middleware', () => {
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
             expect(mockReply.send).toHaveBeenCalledWith({
-                error: 'Token invalido ou expirado.',
+                error: 'Token inválido ou expirado.',
             });
         });
 
@@ -140,7 +140,7 @@ describe('Auth Middleware', () => {
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
             expect(mockReply.send).toHaveBeenCalledWith({
-                error: 'Token invalido ou expirado.',
+                error: 'Token inválido ou expirado.',
             });
         });
 
@@ -163,7 +163,7 @@ describe('Auth Middleware', () => {
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
             expect(mockReply.send).toHaveBeenCalledWith({
-                error: 'Token invalido ou expirado.',
+                error: 'Token inválido ou expirado.',
             });
         });
     });

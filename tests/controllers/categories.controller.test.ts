@@ -132,7 +132,7 @@ describe('Categories Controller', () => {
             // Arrange
             mockRequest.params = { id: '999' };
             vi.mocked(categoryService.getCategoryById).mockRejectedValue(
-                new Error('Categoria nao encontrada.')
+                new Error('Categoria não encontrada.')
             );
 
             // Act & Assert
@@ -141,7 +141,7 @@ describe('Categories Controller', () => {
                     mockRequest as FastifyRequest<{ Params: { id: string } }>,
                     mockReply as FastifyReply
                 )
-            ).rejects.toThrow('Categoria nao encontrada.');
+            ).rejects.toThrow('Categoria não encontrada.');
         });
 
         it('deve retornar erro 400 para ID inválido', async () => {
@@ -196,7 +196,7 @@ describe('Categories Controller', () => {
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
             expect(mockReply.send).toHaveBeenCalledWith({
-                error: 'Nao autenticado.',
+                error: 'Não autenticado.',
             });
         });
 
@@ -313,7 +313,7 @@ describe('Categories Controller', () => {
             mockRequest.body = { name: 'Novo Nome' };
 
             vi.mocked(categoryService.updateCategory).mockRejectedValue(
-                new Error('Categoria nao encontrada.')
+                new Error('Categoria não encontrada.')
             );
 
             // Act & Assert
@@ -325,7 +325,7 @@ describe('Categories Controller', () => {
                     }>,
                     mockReply as FastifyReply
                 )
-            ).rejects.toThrow('Categoria nao encontrada.');
+            ).rejects.toThrow('Categoria não encontrada.');
         });
     });
 
@@ -373,7 +373,7 @@ describe('Categories Controller', () => {
             mockRequest.params = { id: '999' };
 
             vi.mocked(categoryService.deleteCategory).mockRejectedValue(
-                new Error('Categoria nao encontrada.')
+                new Error('Categoria não encontrada.')
             );
 
             // Act & Assert
@@ -382,7 +382,7 @@ describe('Categories Controller', () => {
                     mockRequest as FastifyRequest<{ Params: { id: string } }>,
                     mockReply as FastifyReply
                 )
-            ).rejects.toThrow('Categoria nao encontrada.');
+            ).rejects.toThrow('Categoria não encontrada.');
         });
     });
 });

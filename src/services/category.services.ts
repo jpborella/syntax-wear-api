@@ -33,7 +33,7 @@ export const getCategoryById = async (id: number) => {
     });
 
     if (!category) {
-        throw new Error("Categoria nao encontrada.");
+        throw new Error("Categoria não encontrada.");
     }
 
     return category;
@@ -58,7 +58,7 @@ export const updateCategory = async (id: number, data: Prisma.CategoryUpdateInpu
     });
 
     if (!existingCategory) {
-        throw new Error("Categoria nao encontrada.");
+        throw new Error("Categoria não encontrada.");
     }
 
     const slugValue = typeof data.slug === "string" ? data.slug : data.slug?.set;
@@ -86,11 +86,11 @@ export const deleteCategory = async (id: number) => {
     });
 
     if (!existingCategory) {
-        throw new Error("Categoria nao encontrada.");
+        throw new Error("Categoria não encontrada.");
     }
 
     if (!existingCategory.active) {
-        throw new Error("Categoria ja esta inativa.");
+        throw new Error("Categoria já está inativa.");
     }
 
     await prisma.$transaction([

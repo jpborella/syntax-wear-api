@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-    throw new Error("DATABASE_URL nao encontrada no ambiente.");
+    throw new Error("DATABASE_URL não encontrada no ambiente.");
 }
 
 const dbUrl = new URL(connectionString);

@@ -22,7 +22,7 @@ export const errorHandler = (error: FastifyError, request: FastifyRequest, reply
     } else if (error.code === 'FST_ERR_CTP_EMPTY_JSON_BODY') {
         statusCode = 400;
         message = 'Erro de validação (Fastify).';
-        details = { body: 'O corpo da requisicao nao pode ser vazio.' };
+        details = { body: 'O corpo da requisição não pode ser vazio.' };
     } else if (error.code === 'FST_ERR_JWT_INVALID' || error.code === 'FST_ERR_JWT_MALFORMED') {
         statusCode = 401;
         message = 'Token inválido ou malformado.';
@@ -59,10 +59,10 @@ export const errorHandler = (error: FastifyError, request: FastifyRequest, reply
     ) {
         statusCode = 409;
     } else if (
-        message === 'Pedido nao encontrado.' ||
-        message === 'Produto nao encontrado ou inativo.' ||
-        message === 'Pedido nao encontrado' ||
-        message === 'Produto nao encontrado ou inativo'
+        message === 'Pedido não encontrado.' ||
+        message === 'Produto não encontrado ou inativo.' ||
+        message === 'Pedido não encontrado' ||
+        message === 'Produto não encontrado ou inativo'
     ) {
         statusCode = 404;
     }

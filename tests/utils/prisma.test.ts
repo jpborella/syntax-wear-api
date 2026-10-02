@@ -44,7 +44,7 @@ describe('Prisma Utils', () => {
             await import('../../src/utils/prisma');
             throw new Error('Deveria ter lançado erro');
         } catch (error: any) {
-            expect(error.message).toContain('DATABASE_URL nao encontrada no ambiente');
+            expect(error.message).toContain('DATABASE_URL não encontrada no ambiente');
         }
     });
 

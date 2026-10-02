@@ -20,7 +20,7 @@ const findOrderWithItems = async (id: number): Promise<OrderWithItems> => {
     });
 
     if (!order) {
-        throw new NotFoundError("Pedido nao encontrado.");
+        throw new NotFoundError("Pedido não encontrado.");
     }
 
     return order;
@@ -58,7 +58,7 @@ const applyOrderStatus = async (
     });
 
     if (products.length !== productIds.length) {
-        throw new Error("Produto nao encontrado ou inativo.");
+        throw new Error("Produto não encontrado ou inativo.");
     }
 
     const productMap = new Map(products.map((product) => [product.id, product]));
@@ -68,7 +68,7 @@ const applyOrderStatus = async (
             const product = productMap.get(productId);
 
             if (!product || !product.active) {
-                throw new Error("Produto nao encontrado ou inativo.");
+                throw new Error("Produto não encontrado ou inativo.");
             }
 
             if (product.stock < quantity) {
@@ -183,7 +183,7 @@ export const getOrderById = async (id: number, user: AuthenticatedUser) => {
     });
 
     if (!order) {
-        throw new NotFoundError("Pedido nao encontrado.");
+        throw new NotFoundError("Pedido não encontrado.");
     }
 
     validateOwnership(user, order.userId);
@@ -214,7 +214,7 @@ export const createOrder = async (payload: CreateOrder, userId: number) => {
     });
 
     if (products.length !== productIds.length) {
-        throw new Error("Produto nao encontrado ou inativo.");
+        throw new Error("Produto não encontrado ou inativo.");
     }
 
     const productMap = new Map(products.map((product) => [product.id, product]));
@@ -223,7 +223,7 @@ export const createOrder = async (payload: CreateOrder, userId: number) => {
         const product = productMap.get(productId);
 
         if (!product) {
-            throw new Error("Produto nao encontrado ou inativo.");
+            throw new Error("Produto não encontrado ou inativo.");
         }
 
         if (product.stock < quantity) {

@@ -75,7 +75,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
                         },
                     },
                     401: {
-                        description: "Nao autorizado",
+                        description: "Não autorizado",
                         type: "object",
                         properties: {
                             error: { type: "string" },
@@ -149,7 +149,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
                         },
                     },
                     401: {
-                        description: "Nao autorizado",
+                        description: "Não autorizado",
                         type: "object",
                         properties: {
                             error: { type: "string" },
@@ -239,7 +239,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
                         },
                     },
                     401: {
-                        description: "Nao autorizado",
+                        description: "Não autorizado",
                         type: "object",
                         properties: {
                             error: { type: "string" },
@@ -323,7 +323,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
                         },
                     },
                     401: {
-                        description: "Nao autorizado",
+                        description: "Não autorizado",
                         type: "object",
                         properties: {
                             error: { type: "string" },
@@ -374,7 +374,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
                         },
                     },
                     401: {
-                        description: "Nao autorizado",
+                        description: "Não autorizado",
                         type: "object",
                         properties: {
                             error: { type: "string" },

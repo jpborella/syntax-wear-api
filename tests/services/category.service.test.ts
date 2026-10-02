@@ -116,7 +116,7 @@ describe('Category Service', () => {
 
             // Act & Assert
             await expect(getCategoryById(999)).rejects.toThrow(
-                'Categoria nao encontrada.'
+                'Categoria não encontrada.'
             );
         });
 
@@ -126,7 +126,7 @@ describe('Category Service', () => {
 
             // Act & Assert
             await expect(getCategoryById(1)).rejects.toThrow(
-                'Categoria nao encontrada.'
+                'Categoria não encontrada.'
             );
         });
     });
@@ -434,7 +434,7 @@ describe('Category Service', () => {
 
             // Act & Assert
             await expect(updateCategory(999, updateData)).rejects.toThrow(
-                'Categoria nao encontrada.'
+                'Categoria não encontrada.'
             );
             expect(prisma.category.update).not.toHaveBeenCalled();
         });
@@ -551,7 +551,7 @@ describe('Category Service', () => {
 
             // Act & Assert
             await expect(deleteCategory(999)).rejects.toThrow(
-                'Categoria nao encontrada.'
+                'Categoria não encontrada.'
             );
             expect(prisma.$transaction).not.toHaveBeenCalled();
         });
@@ -569,7 +569,7 @@ describe('Category Service', () => {
 
             // Act & Assert
             await expect(deleteCategory(1)).rejects.toThrow(
-                'Categoria ja esta inativa.'
+                'Categoria já está inativa.'
             );
             expect(prisma.$transaction).not.toHaveBeenCalled();
         });

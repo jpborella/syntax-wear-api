@@ -356,7 +356,7 @@ describe('Order Services', () => {
 
             // Act & Assert
             await expect(createOrder(createPayload, mockAuthUser.id)).rejects.toThrow(
-                'Produto nao encontrado ou inativo.'
+                'Produto não encontrado ou inativo.'
             );
         });
 

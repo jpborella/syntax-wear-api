@@ -14,11 +14,7 @@ import { errorHandler } from './middlewares/error.middleware';
 import fastifyCookie from '@fastify/cookie';
 import { validateEnv } from './config/env';
 import { AUTH_COOKIE_NAME } from './config/auth-cookie';
-
-const allowedOrigins = [
-    'http://localhost:5173',
-    'https://syntax-wear-shop-online.vercel.app',
-];
+import { ALLOWED_ORIGINS, API_RATE_LIMIT_MAX, API_RATE_LIMIT_WINDOW } from './config/constants';
 
 export async function buildApp() {
     const env = validateEnv();
@@ -27,8 +23,8 @@ export async function buildApp() {
     });
 
     fastify.register(rateLimit, {
-        max: 100,
-        timeWindow: '15 minutes',
+        max: API_RATE_LIMIT_MAX,
+        timeWindow: API_RATE_LIMIT_WINDOW,
     });
 
     fastify.register(fastifyCookie);
@@ -37,7 +33,7 @@ export async function buildApp() {
         secret: env.JWT_SECRET,
         cookie: {
             cookieName: AUTH_COOKIE_NAME,
-            signed: false, // Define se o cookie deve ser assinado (opcional) - nao estamos usando assinatura de cookie, apenas JWT
+            signed: false,
         },
         sign: {
             expiresIn: "1h",
@@ -51,7 +47,7 @@ export async function buildApp() {
     });
 
     fastify.register(cors, {
-        origin: allowedOrigins,
+        origin: ALLOWED_ORIGINS,
         credentials: true,
         methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     });

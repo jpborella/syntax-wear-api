@@ -1,4 +1,5 @@
 import z from "zod";
+import { DEFAULT_PAGINATION_LIMIT, MAX_PAGINATION_LIMIT } from "../config/constants";
 
 export const loginSchema = z.object({
     email: z.email("Email inválido."),

@@ -19,8 +19,7 @@ Essa revisão considera que o Stripe é uma etapa futura e opcional, e não uma 
 
 ### Pendentes — em ordem de importância
 
-1. **[PENDENTE] Padronizar mensagens e idioma.** Corrigir inconsistências de português, acentuação e clareza das respostas da API e do frontend.
-2. **[PENDENTE] Avaliar melhorias opcionais de organização.** Centralizar configurações e padronizar nomes e formatação, sem misturar com correções funcionais.
+Nenhuma pendência imediata nesta etapa. Os refinamentos opcionais restantes continuam como itens de manutenção, mas não bloqueiam a apresentação atual.
 
 ### Concluídas
 
@@ -35,6 +34,8 @@ Essa revisão considera que o Stripe é uma etapa futura e opcional, e não uma 
 9. **[CONCLUÍDA] Remover `any` dos serviços do backend e logs de debug.**
 10. **[CONCLUÍDA] Criar o README profissional e o comando de verificação do backend.**
 11. **[CONCLUÍDA] Atualizar a documentação do backend para refletir o código atual.** A revisão do PRD e do hardening foi alinhada com as rotas, autenticação, autorização, estoque e estado real da aplicação.
+12. **[CONCLUÍDA] Padronizar mensagens e idioma.** Ajuste final do português, acentuação e clareza das respostas da API e dos fluxos de erro.
+13. **[CONCLUÍDA] Centralizar configurações repetidas.** Valores de CORS, rate limit e paginação agora ficam em um único ponto de configuração para reduzir duplicação e facilitar manutenção.
 
 O Stripe continua fora do escopo desta etapa. O registro detalhado abaixo documenta os itens e suas justificativas; a fila acima define a ordem atual de execução.
 
@@ -227,7 +228,7 @@ Isso reduz o risco de que uma pequena mudança no texto do erro altere indevidam
 
 ---
 
-### 9. [PENDENTE] Padronizar mensagens e idioma
+### 9. [CONCLUÍDO] Padronizar mensagens e idioma
 
 Há mensagens com e sem acentuação, por exemplo:
 
@@ -348,7 +349,7 @@ Também ficou explícito que o frontend e o backend são aplicações separadas 
 
 ---
 
-### 16. [PENDENTE] Centralizar configurações
+### 16. [CONCLUÍDO] Centralizar configurações
 
 URLs, nome do cookie, limites de paginação, expiração do JWT e origens permitidas devem ficar em arquivos de configuração, por exemplo:
 

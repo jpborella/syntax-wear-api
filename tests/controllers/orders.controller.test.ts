@@ -93,7 +93,7 @@ describe('Orders Controller', () => {
 
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
-            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Nao autenticado.' });
+            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Não autenticado.' });
         });
 
         it('deve listar pedidos com filtros', async () => {
@@ -132,7 +132,7 @@ describe('Orders Controller', () => {
 
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
-            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Nao autenticado.' });
+            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Não autenticado.' });
         });
 
         it('deve retornar pedido por ID', async () => {
@@ -161,7 +161,7 @@ describe('Orders Controller', () => {
 
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
-            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Nao autenticado.' });
+            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Não autenticado.' });
         });
 
         it('deve criar novo pedido com sucesso', async () => {
@@ -196,7 +196,7 @@ describe('Orders Controller', () => {
 
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
-            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Nao autenticado.' });
+            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Não autenticado.' });
         });
 
         it('deve atualizar status do pedido com sucesso', async () => {
@@ -227,7 +227,7 @@ describe('Orders Controller', () => {
 
             // Assert
             expect(mockReply.status).toHaveBeenCalledWith(401);
-            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Nao autenticado.' });
+            expect(mockReply.send).toHaveBeenCalledWith({ error: 'Não autenticado.' });
         });
 
         it('deve deletar pedido com sucesso', async () => {

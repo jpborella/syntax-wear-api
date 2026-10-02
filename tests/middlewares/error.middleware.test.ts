@@ -112,7 +112,7 @@ describe('Error Middleware', () => {
             expect(mockReply.status).toHaveBeenCalledWith(400);
             expect(sendedResponse.message).toBe('Erro de validação (Fastify).');
             expect(sendedResponse.details).toEqual({
-                body: 'O corpo da requisicao nao pode ser vazio.',
+                body: 'O corpo da requisição não pode ser vazio.',
             });
         });
 
@@ -259,9 +259,9 @@ describe('Error Middleware', () => {
             expect(sendedResponse.message).toBe('CPF já cadastrado.');
         });
 
-        it('deve retornar 404 para "Pedido nao encontrado"', () => {
+        it('deve retornar 404 para "Pedido não encontrado"', () => {
             // Arrange
-            const error = new Error('Pedido nao encontrado.') as FastifyError;
+            const error = new Error('Pedido não encontrado.') as FastifyError;
             error.statusCode = 404;
 
             // Act
@@ -276,10 +276,10 @@ describe('Error Middleware', () => {
             expect(sendedResponse.statusCode).toBe(404);
         });
 
-        it('deve retornar 404 para "Produto nao encontrado ou inativo"', () => {
+        it('deve retornar 404 para "Produto não encontrado ou inativo"', () => {
             // Arrange
             const error = new Error(
-                'Produto nao encontrado ou inativo.'
+                'Produto não encontrado ou inativo.'
             ) as FastifyError;
             error.statusCode = 404;
 
